@@ -19,13 +19,10 @@ export default {
   position: absolute;
   top: $pad-min;
   left: $pad-min;
+  z-index: 10;
   @include min-sm {
     width: 80px;
     height: 80px;
-    position: fixed;
-    top: $pad-min;
-    left: $pad-min;
-    z-index: 10;
   }
 }
 </style>

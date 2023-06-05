@@ -52,6 +52,10 @@ export default {
 .tj-header {
   padding: calc(15px + env(safe-area-inset-top)) $pad $pad-min;
   position: relative;
+  padding-block: $pad-min;
+  @include min-sm {
+    padding-block: $pad-demi + $rad;
+  }
   &--inner {
     display: flex;
     align-items: center;

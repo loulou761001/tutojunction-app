@@ -1,10 +1,13 @@
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
+  ssr: true,
+  target: 'static',
   head: {
     title: 'tj_app',
     htmlAttrs: {
       lang: 'en',
     },
+
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -18,10 +21,15 @@ export default {
   css: [
     '@fortawesome/fontawesome-svg-core/styles.css',
     '@/assets/scss/global.scss',
+    '@/assets/scss/wysiwyg.scss',
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: ['~/plugins/fontawesome.js'],
+  plugins: [
+    '~/plugins/fontawesome.js',
+    '~/plugins/utils.js',
+    '~/plugins/users.js',
+  ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -38,11 +46,45 @@ export default {
   },
 
   // Modules: https://go.nuxtjs.dev/config-modules
-  modules: ['nuxt-breakpoints', '@nuxtjs/axios'],
+  modules: [
+    'nuxt-breakpoints',
+    '@nuxtjs/axios',
+    '@nuxtjs/universal-storage',
+    '@nuxtjs/auth-next',
+  ],
+  storage: {},
   axios: {
     baseURL: 'http://localhost:1337', // Used as fallback if no runtime config is provided
   },
+  router: {
+    middleware: ['auth'],
+  },
+  auth: {
+    strategies: {
+      local: {
+        token: {
+          prefix: '_token.',
+          global: true,
+          maxAge: 86400,
+          // required: true,
+          // type: 'Bearer'
+        },
+        user: {
+          property: 'user',
+          autoFetch: true,
+        },
+
+        endpoints: {
+          login: { url: '/users/login', method: 'post' },
+          logout: { url: '/users/logout', method: 'post' },
+          user: { url: '/users/me', method: 'get' },
+        },
+      },
+    },
+  },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
-  build: {},
+  build: {
+    transpile: ['defu'],
+  },
 }

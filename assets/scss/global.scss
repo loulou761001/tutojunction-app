@@ -8,12 +8,60 @@
 html {
   font-family: Inter, serif;
 }
-
+.text-input {
+  padding: 5px 15px;
+  background-color: #F5F5F5;
+  border-radius: 5px;
+}
 .app-inner {
   padding-inline: $pad-demi;
+  max-width: 1020px;
+  position: relative;
+
   //@include min-md {
   //  padding-inline: $pad-demi;
   //}
+}
+
+@-webkit-keyframes rotating /* Safari and Chrome */ {
+  from {
+    -webkit-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes rotating {
+  from {
+    -ms-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -ms-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+.rotate {
+  -webkit-animation: rotating 2s linear infinite;
+  -moz-animation: rotating 2s linear infinite;
+  -ms-animation: rotating 2s linear infinite;
+  -o-animation: rotating 2s linear infinite;
+  animation: rotating 2s linear infinite;
+}
+
+.spinner {
+  border-radius: $rad;
+  padding: $pad-min;
 }
 
 a{
@@ -44,9 +92,11 @@ a{
   background-color: white;
   transition: 0.2s;
   cursor: pointer;
-
+  &:disabled,&[disabled] {
+    filter: grayscale(0.5);
+  }
   &:hover {
-    background-color:  rgba(0,0,0,0.05);;
+    background-color:  $brand-yellow;
   }
   &.border {
     border: 2px solid black;
@@ -54,13 +104,17 @@ a{
   &.dark {
     color: white;
     background-color: black;
+    &:disabled,&[disabled] {
+      background-color: dimgrey;
+    }
     &:hover {
-      background-color: rgba(0,0,0,0.8);
+      color: black;
+      background-color: $brand-yellow;
     }
   }
 }
 
-input {
+input, input[type=submit],.text-input {
   padding: $rad $pad-min;
   background-color: $brand-light-grey;
   border-radius: $rad;

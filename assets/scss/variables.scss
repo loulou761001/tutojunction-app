@@ -13,7 +13,13 @@ $pad-xmin: 10px;
 $rad: 5px;
 $trans: all 0.3s;
 $border: 1px solid $brand-light-grey;
-$shadow: 4px 4px 6px 0 rgba(0, 0, 0, 0.2);
+$shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+
+@mixin box-shadow {
+  box-shadow: $shadow;
+  -webkit-box-shadow: $shadow;
+  -moz-box-shadow: $shadow;
+}
 
 
 $screen-xs-min: 480px;

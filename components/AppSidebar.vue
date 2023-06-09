@@ -1,0 +1,103 @@
+<template>
+  <div v-if="$fetchState.pending" class="app-sidebar loading">
+    <font-awesome-icon
+      icon="fa-solid fa-circle-notch"
+      class="spinner rotate"
+      size="lg"
+      style="color: #000000"
+    />
+  </div>
+  <div v-else class="app-sidebar">
+    <div class="app-sidebar--pannel">
+      <h3 class="app-sidebar--pannel_title">Nos catégories</h3>
+      <nuxt-link
+        v-for="cat in categoriesToShow"
+        :key="cat._id"
+        :to="'categories/' + cat.slug"
+        class="app-sidebar--pannel_item"
+      >
+        {{ cat.name }}
+      </nuxt-link>
+      <nuxt-link v-if="categories.length > 10" to="/categories"
+        >Voir plus</nuxt-link
+      >
+    </div>
+    <div class="app-sidebar--pannel">
+      <h3 class="app-sidebar--pannel_title">Rédacteurs recommandés</h3>
+      <UserSmallCard v-for="user in usersToShow" :key="user._id" :user="user" />
+    </div>
+  </div>
+</template>
+
+<script>
+import UserSmallCard from './User/SmallCard.vue'
+
+export default {
+  name: 'AppSidebar',
+  components: { UserSmallCard },
+  data() {
+    return {
+      usersToShow: [],
+      categories: [],
+    }
+  },
+  async fetch() {
+    await this.$axios
+      .get('/users', {})
+      .then(async (data) => {
+        this.usersToShow = data.data
+        await this.$axios
+          .get('/categories/getAllParents')
+          .then((data) => {
+            this.categories = data.data
+            console.log(data)
+          })
+          .catch((err) => {
+            this.$utils.consoleError(err)
+          })
+        console.log('te')
+      })
+      .catch((err) => {
+        this.$utils.consoleError(err)
+      })
+
+    console.log('fetch done')
+  },
+  computed: {
+    categoriesToShow() {
+      return this.categories.slice(0, 10)
+    },
+  },
+  mounted() {},
+}
+</script>
+
+<style lang="scss" scoped>
+.app-sidebar {
+  position: relative;
+  border-left: 1px solid $brand-grey;
+  height: 100%;
+  padding: $pad-min;
+
+  min-width: 350px;
+  &--pannel {
+    max-width: 300px;
+    width: 100%;
+    border-radius: $rad;
+
+    padding: $rad;
+    margin-bottom: $pad-min;
+    display: flex;
+    margin-right: auto;
+    flex-direction: column;
+    &_title {
+      font-weight: bold;
+      border-bottom: 2px solid black;
+      margin-bottom: $pad-min;
+    }
+    &_item {
+      margin-bottom: $rad;
+    }
+  }
+}
+</style>

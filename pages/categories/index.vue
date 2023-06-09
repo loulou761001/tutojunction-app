@@ -1,9 +1,11 @@
 <template>
-  <p>fefghettheth</p>
+  <div></div>
 </template>
 
 <script>
 export default {
-  name: 'IndexPage',
+  name: 'Categories',
 }
 </script>
+
+<style scoped></style>

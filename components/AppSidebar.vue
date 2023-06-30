@@ -1,13 +1,13 @@
 <template>
-  <div v-if="$fetchState.pending" class="app-sidebar loading">
-    <font-awesome-icon
-      icon="fa-solid fa-circle-notch"
-      class="spinner rotate"
-      size="lg"
-      style="color: #000000"
-    />
-  </div>
-  <div v-else class="app-sidebar">
+  <!--  <div v-if="$fetchState.pending" class="app-sidebar loading">-->
+  <!--    <font-awesome-icon-->
+  <!--      icon="fa-solid fa-circle-notch"-->
+  <!--      class="spinner rotate"-->
+  <!--      size="lg"-->
+  <!--      style="color: #000000"-->
+  <!--    />-->
+  <!--  </div>-->
+  <div class="app-sidebar">
     <div class="app-sidebar--pannel">
       <h3 class="app-sidebar--pannel_title">Nos catégories</h3>
       <nuxt-link
@@ -30,6 +30,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import UserSmallCard from './User/SmallCard.vue'
 
 export default {
@@ -37,35 +38,22 @@ export default {
   components: { UserSmallCard },
   data() {
     return {
-      usersToShow: [],
+      users: [],
       categories: [],
     }
   },
-  async fetch() {
-    await this.$axios
-      .get('/users', {})
-      .then(async (data) => {
-        this.usersToShow = data.data
-        await this.$axios
-          .get('/categories/getAllParents')
-          .then((data) => {
-            this.categories = data.data
-            console.log(data)
-          })
-          .catch((err) => {
-            this.$utils.consoleError(err)
-          })
-        console.log('te')
-      })
-      .catch((err) => {
-        this.$utils.consoleError(err)
-      })
-
-    console.log('fetch done')
-  },
   computed: {
+    ...mapGetters(['isAuthenticated', 'loggedInUser']),
+    ...mapGetters({ getCategories: 'getCategories' }),
+    parentCategories() {
+      return this.getCategories.filter((item) => !item.parent)
+    },
+
     categoriesToShow() {
-      return this.categories.slice(0, 10)
+      return this.parentCategories.slice(0, 10)
+    },
+    usersToShow() {
+      return this.users.slice(0, 6)
     },
   },
   mounted() {},

@@ -1,5 +1,13 @@
 <template>
-  <div class="app">
+  <div v-if="$fetch.pending" class="loading">
+    <font-awesome-icon
+      icon="fa-solid fa-circle-notch"
+      class="spinner rotate"
+      size="lg"
+      style="color: #000000"
+    />
+  </div>
+  <div v-else class="app">
     <HeaderComp />
     <div class="app--content flex">
       <nuxt class="app--content_center" />
@@ -16,12 +24,20 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import HeaderComp from '../components/Header.vue'
 import AppSidebar from '../components/AppSidebar.vue'
 
 export default {
   name: 'Default',
   components: { AppSidebar, HeaderComp },
+
+  async fetch() {
+    await this.fillCategories()
+  },
+  methods: {
+    ...mapActions(['fillCategories']),
+  },
 }
 </script>
 

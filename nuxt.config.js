@@ -47,6 +47,7 @@ export default {
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
+    '@nuxtjs/dotenv',
     'nuxt-breakpoints',
     '@nuxtjs/axios',
     '@nuxtjs/universal-storage',

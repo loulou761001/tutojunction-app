@@ -5,6 +5,7 @@
       <span>{{ user.username }}</span>
     </div>
     <button
+      v-if="isAuthenticated"
       :disabled="loading"
       class="btn user-small-card--follow dark"
       @click="loading ? null : follow()"
@@ -13,6 +14,7 @@
     </button>
   </div>
 </template>
+c
 
 <script>
 import { mapGetters } from 'vuex'
@@ -36,7 +38,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['loggedInUser']),
+    ...mapGetters(['isAuthenticated', 'loggedInUser']),
     isFollowed() {
       return this.user.followers.includes(this.loggedInUser.id)
     },

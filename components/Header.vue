@@ -1,6 +1,6 @@
 <template>
   <header class="tj-header">
-    <nuxt-link to="/home" class="tj-header_logo no-deco"><tj-logo /></nuxt-link>
+    <nuxt-link to="/" class="tj-header_logo no-deco"><tj-logo /></nuxt-link>
 
     <div class="tj-header--inner">
       <div class="input">
@@ -21,7 +21,7 @@
         >
         <nuxt-link
           v-if="$auth.loggedIn"
-          to="/categories"
+          to="/creer"
           class="tj-header--inner--nav--item"
           >Rédige un article !</nuxt-link
         >

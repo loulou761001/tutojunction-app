@@ -1,68 +1,61 @@
 <template>
-  <div>
-    <editor-content :editor="editor" />
+  <div class="wysiwyg">
+    <client-only>
+      <editor
+        v-model="content"
+        :disabled="loading"
+        api-key="2rfhq0mgca0ycshwuo4kq8spmchrpro3f9obni5vg74ncw2a"
+        :init="{
+          height: 500,
+          menubar: false,
+          plugins: [
+            'advlist autolink lists link image charmap print preview anchor',
+            'searchreplace visualblocks code fullscreen',
+            'insertdatetime media table paste code help wordcount',
+          ],
+          toolbar:
+            'undo redo | formatselect | bold italic backcolor | \
+           alignleft aligncenter alignright alignjustify | \
+           bullist numlist outdent indent | removeformat | help',
+        }"
+      />
+    </client-only>
   </div>
 </template>
 
 <script>
-import { Editor, EditorContent } from '@tiptap/vue-2'
-import StarterKit from '@tiptap/starter-kit'
-import { Placeholder } from '@tiptap/extension-placeholder'
-
+import Editor from '@tinymce/tinymce-vue'
+import { config } from '@fortawesome/fontawesome-svg-core'
 export default {
   name: 'EditorWysiwyg',
   components: {
-    EditorContent,
+    editor: Editor,
+  },
+  props: {
+    loading: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
     return {
-      editor: null,
+      content: '',
     }
   },
+
   watch: {
-    value(value) {
-      // HTML
-      const isSame = this.editor.getHTML() === value
-
-      // JSON
-      // const isSame = JSON.stringify(this.editor.getJSON()) === JSON.stringify(value)
-
-      if (isSame) {
-        return
-      }
-
-      this.editor.commands.setContent(value, false)
+    content: function () {
+      this.$emit('updateContent', this.content)
     },
   },
-  mounted() {
-    this.editor = new Editor({
-      content: '',
-      editorProps: {
-        attributes: {
-          class: 'text-input',
-        },
-      },
-      placeholder: 'Entre le contenu de ton article ici',
-      extensions: [
-        StarterKit,
-        Placeholder.configure({
-          placeholder: 'My Custom Placeholder',
-        }),
-      ],
-      onUpdate: () => {
-        // HTML
-        console.log(this.editor.getHTML())
-        this.$emit('input', this.editor.getHTML())
+  mounted() {},
 
-        // JSON
-        // this.$emit('input', this.editor.getJSON())
-      },
-    })
-  },
-
-  beforeDestroy() {
-    this.editor.destroy()
+  beforeDestroy() {},
+  methods: {
+    config() {
+      return config
+    },
   },
 }
 </script>

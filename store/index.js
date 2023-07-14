@@ -14,7 +14,6 @@ export const getters = {
     return state.auth.user
   },
   getCategories(state) {
-    console.log(state.categories)
     return state.categories
   },
   getSelectedImg(state) {
@@ -39,7 +38,6 @@ export const actions = {
   fillCategories: async function ({ commit, state }) {
     if (!state.categories.length) {
       await this.$axios.get('/categories').then((data) => {
-        console.log('fill cats, ', data.data)
         commit('FILL_CATEGORIES', data.data)
       })
     }

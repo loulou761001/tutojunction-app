@@ -112,14 +112,17 @@
         $utils.consoleLog('close')
       "
     />
+    <PopupLoading v-if="loading" />
   </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import PopupLoading from '../components/Popup/Loading.vue'
 
 export default {
   name: 'Creer',
+  components: { PopupLoading },
   data() {
     return {
       thumbnailMode: false,
@@ -145,6 +148,7 @@ export default {
         title: null,
         category: null,
         thumbnail: null,
+        exists: null,
       },
     }
   },
@@ -231,7 +235,7 @@ export default {
     },
     separateTags(e) {
       this.error.tags = null
-      const tag = this.tagsString.split(',')[0].trim()
+      const tag = this.tagsString.split(',')[0].trim().toLowerCase()
       if (tag.length > this.maxCharacters.tags) {
         this.error.tags = 'tooLong'
         return
@@ -245,7 +249,7 @@ export default {
     updateContent(value) {
       this.articleData.content = value
     },
-    checkArticle() {
+    async checkArticle() {
       this.$utils.consoleLog('check')
       this.error.content = null
       this.error.tags = null
@@ -270,16 +274,28 @@ export default {
       if (!this.articleData.thumbnail) {
         this.error.thumbnail = 'noThumbnail'
       }
-      for (const value of Object.values(this.error)) {
-        if (value !== null) return
-      }
-      this.sendArticle()
+      await this.$axios
+        .post('articles/findByContent', { article: this.articleData })
+        .then((data) => {
+          if (data.data !== 'ok' && data.data > 16) {
+            this.error.exists = 'exists'
+          }
+          for (const value of Object.values(this.error)) {
+            if (value !== null) return
+          }
+          this.sendArticle()
+        })
     },
     async sendArticle() {
       this.$utils.consoleLog('send')
       this.loading = true
       try {
-        await this.$axios.post('/articles/create', this.articleData)
+        const data = await this.$axios.post(
+          '/articles/create',
+          this.articleData
+        )
+        console.log(data)
+        await this.$router.push('/tuto/' + data.data._id)
       } catch (e) {
         this.$utils.consoleLog('error uploading : ', e)
       } finally {

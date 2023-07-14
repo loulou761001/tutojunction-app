@@ -2,40 +2,52 @@
   <nuxt-link :to="'/tuto/' + tuto._id" class="tuto-card">
     <div
       class="tuto-card_header"
+      :class="{ small: small }"
       :style="{ backgroundImage: 'url(' + tuto.thumbnail.url + ')' }"
-    ></div>
-    <div class="tuto-card--info">
-      <h4>{{ tuto.title }}</h4>
+    >
+      <h4 v-if="small" class="tuto-card_header_title">{{ tuto.title }}</h4>
+    </div>
+    <div v-if="!small" class="tuto-card--info">
+      <h4 :title="tuto.title.length > 16 ? tuto.title : null">
+        {{
+          tuto.title.length > 16 ? tuto.title.slice(0, 16) + '...' : tuto.title
+        }}
+      </h4>
       <p>{{ new Date(tuto.created_at).toLocaleDateString('fr') }}</p>
     </div>
-    <hr />
-    <div class="tuto-card--meta">
-      <TutoTag
+    <hr v-if="!small" />
+    <div v-if="!small" class="tuto-card--meta">
+      <nuxt-link
         v-for="(tag, index) in tuto.categories"
         :key="'Category ' + index"
-        :content="tag.name"
-        :link="tag.slug"
-      />
-      <TutoTag
+        :to="'/categories/' + tag.slug"
+        class="category-name small"
+        >{{ tag.name }}</nuxt-link
+      >
+      <nuxt-link
         v-for="(tag, index) in tuto.tags"
         :key="'Tag ' + index"
-        :content="tag"
-      />
+        :to="'/tags/' + tag"
+        class="category-name small"
+        >{{ tag }}</nuxt-link
+      >
     </div>
   </nuxt-link>
 </template>
 
 <script>
 import categories from '../../pages/categories/index.vue'
-import TutoTag from './Tag.vue'
 
 export default {
   name: 'TutoCard',
-  components: { TutoTag },
   props: {
     tuto: {
       type: Object,
       required: true,
+    },
+    small: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
@@ -58,12 +70,32 @@ export default {
     border-color: $brand-grey;
   }
   &_header {
+    border-radius: $rad;
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
     height: 160px;
     //margin-bottom: $pad-min;
-    background-image: url('assets/imgs/card_placeholder.png');
+    display: flex;
+    &.small::after {
+      z-index: 2;
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 25%;
+      min-width: 200px;
+      max-width: 260px;
+      height: 80%;
+      border-radius: $rad;
+      background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5));
+    }
+
+    &_title {
+      z-index: 3;
+      color: white;
+      margin: auto $rad $rad;
+    }
   }
   &--info {
     padding: $pad-min;

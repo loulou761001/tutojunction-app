@@ -22,6 +22,8 @@ export default {
     '@fortawesome/fontawesome-svg-core/styles.css',
     '@/assets/scss/global.scss',
     '@/assets/scss/wysiwyg.scss',
+    '@/assets/scss/slider.scss',
+    '@/assets/scss/flickingPagination.scss',
     '@/assets/scss/popup.scss',
   ],
 

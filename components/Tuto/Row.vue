@@ -4,18 +4,22 @@
       <h3>{{ title }}</h3>
       <hr />
     </div>
-    <flicking :options="{ align: 'prev' }">
-      <tuto-card v-for="tuto in tutos" :key="tuto._id" :tuto="tuto" />
-    </flicking>
+    <client-only>
+      <flicking :options="{ align: 'prev' }">
+        <TutoCard
+          v-for="(tuto, index) in tutos"
+          :key="index"
+          :tuto="tuto"
+          :small="small"
+        />
+      </flicking>
+    </client-only>
   </div>
 </template>
 
 <script>
-import TutoCard from './Card.vue'
-
 export default {
   name: 'TutoRow',
-  components: { TutoCard },
   props: {
     tutos: {
       type: Array,
@@ -25,8 +29,12 @@ export default {
       type: String,
       default: null,
     },
+    small: {
+      type: Boolean,
+      default: false,
+    },
   },
 }
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped></style>

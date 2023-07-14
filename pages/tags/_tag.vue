@@ -3,16 +3,7 @@
   <div v-else-if="error" class="category-page_error">404</div>
   <div v-else class="category-page">
     <div class="category-page--header">
-      <h1>{{ category.name }}</h1>
-    </div>
-    <div v-if="!category.parent && subs.length">
-      <nuxt-link
-        v-for="sub in subs"
-        :key="sub._id"
-        :to="'/categories/' + sub.slug"
-        class="category-name small"
-        >{{ sub.name }}</nuxt-link
-      >
+      <h1>{{ tag }}</h1>
     </div>
     <hr />
     <div class="category-page--content">
@@ -31,35 +22,22 @@ import SpinnerLoader from '../../components/SpinnerLoader.vue'
 import TutoCard from '../../components/Tuto/Card.vue'
 
 export default {
-  name: 'CategoriesSlug',
+  name: 'TagSingle',
   components: { TutoCard, SpinnerLoader },
   data() {
     return {
       error: false,
-      category: null,
+      tag: null,
       articles: [],
-      subs: [],
     }
   },
 
   async fetch() {
-    const category = this.getCategories.find(
-      (item) => item.slug === this.$route.params.slug
-    )
-    this.$utils.consoleLog('category', category)
-    if (!category) {
-      this.error = true
-      return
-    }
-    this.category = category
+    this.tag = this.$route.params.tag
     try {
-      const articles = await this.$axios.get(
-        'articles/byCategory/' + category._id
-      )
-      const subs = await this.$axios.get('categories/getSubs/' + category._id)
+      const articles = await this.$axios.get('articles/byTag/' + this.tag)
       this.$utils.consoleLog('articles', articles.data)
       this.articles = articles.data
-      this.subs = subs.data
     } catch (e) {
       this.$utils.consoleLog(e)
     }

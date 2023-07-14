@@ -50,7 +50,23 @@
         >
           Valider
         </button>
+        <button
+          :disabled="selectedImage == null"
+          class="btn red"
+          @click="deleting.popup = true"
+        >
+          Supprimer
+        </button>
       </div>
+      <PopupDelete
+        v-if="deleting.popup"
+        :loading="deleting.loading"
+        @close="
+          deleting.popup = false
+          deleting.loading = false
+        "
+        @delete="deleteImg(selectedImage)"
+      />
     </div>
     <div v-else>
       <p>test filepond</p>
@@ -80,10 +96,11 @@
 
 <script>
 import SpinnerLoader from '../SpinnerLoader.vue'
+import PopupDelete from './Delete.vue'
 
 export default {
   name: 'PopupMedia',
-  components: { SpinnerLoader },
+  components: { PopupDelete, SpinnerLoader },
   props: {
     category: {
       type: String,
@@ -97,6 +114,10 @@ export default {
       fileToUpload: null,
       skip: 0,
       selectedImage: null,
+      deleting: {
+        popup: false,
+        loading: false,
+      },
     }
   },
   async fetch() {
@@ -129,13 +150,18 @@ export default {
   },
   methods: {
     async deleteImg(img) {
+      this.deleting.loading = true
       await this.$axios
-        .delete('files/' + img.public_id)
+        .delete('files/' + img._id)
         .then(() => {
           this.$fetch()
+          this.deleting.popup = false
         })
         .catch((err) => {
           this.$utils.consoleError(err)
+        })
+        .finally(() => {
+          this.deleting.loading = false
         })
     },
     async getNextImages() {

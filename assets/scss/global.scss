@@ -92,6 +92,13 @@ a{
   transition: 0.2s;
   cursor: pointer;
   background-color: $brand-light-grey;
+  &.red {
+    background-color: darkred;
+    color: white;
+    &:hover {
+      background-color:  $brand-orange;
+    }
+  }
   &.small {
     padding: 2px $rad;
     font-size: 14px;
@@ -123,7 +130,10 @@ a{
 }
 hr {
   margin-block: $rad $pad-min;
-  border-top: 2px solid black;
+  border-top: 2px solid $brand-yellow;
+  &.grey {
+    border-top-color: $brand-light-grey;
+  }
 }
 input, input[type=submit],.text-input,textarea,select
 {
@@ -166,16 +176,16 @@ h1,h2,h3,h4,h5,h6 {
   font-weight: bold;
 }
 h1 {
-  font-size: 40px;
+  font-size: 32px;
 }
 h2 {
-  font-size: 36px;
-}
-h3 {
   font-size: 28px;
 }
-h4 {
+h3 {
   font-size: 24px;
+}
+h4 {
+  font-size: 18px;
 }
 
 

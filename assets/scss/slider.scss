@@ -1,0 +1,99 @@
+.flicking-viewport {
+  position: relative;
+  overflow: hidden;
+}
+
+.flicking-camera {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  position: relative;
+  flex-direction: row;
+  z-index: 1;
+}
+
+.flicking-camera > * {
+  flex-shrink: 0;
+}
+
+.flicking-viewport.vertical {
+  display: inline-flex;
+}
+
+.flicking-viewport.vertical > .flicking-camera {
+  display: inline-flex;
+  flex-direction: column;
+}
+
+.flicking-viewport.flicking-hidden .flicking-camera > * {
+  visibility: hidden;
+}
+
+.flicking-pagination-bullets {
+  margin: 10px;
+  display: flex;
+  justify-content: center;
+  .flicking-pagination-bullet {
+    width: 10px;
+    height: 10px;
+    background-color: #ccc;
+    border-radius: 100%;
+    display: block;
+    transition: all 0.3s;
+    margin: 10px;
+    cursor: pointer;
+    &-active {
+      background-color: #343a40;
+      width: 25px;
+      border-radius: 5px;
+    }
+  }
+}
+
+.flicking-pagination-team {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+
+  .flicking-pagination-bullet {
+    width: 10px;
+    height: 10px;
+    background-color: #ccc;
+    border-radius: 100%;
+    display: block;
+    transition: all 0.3s;
+    margin-bottom: 10px;
+    cursor: pointer;
+    margin: 0 10px;
+
+    &-active {
+      background-color: #343a40;
+      width: 25px;
+      border-radius: 5px;
+    }
+  }
+}
+
+.flicking-pagination-advisory {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+
+  .flicking-pagination-bullet {
+    width: 10px;
+    height: 10px;
+    background-color: #ccc;
+    border-radius: 100%;
+    display: block;
+    transition: all 0.3s;
+    margin-bottom: 10px;
+    cursor: pointer;
+    margin: 10px;
+
+    &-active {
+      background-color: #fff;
+      width: 25px;
+      border-radius: 5px;
+    }
+  }
+}

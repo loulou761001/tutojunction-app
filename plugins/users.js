@@ -7,7 +7,6 @@ export default function (context, inject) {
   // GET CURRENT LOGGED IN USER
   async function currentUser() {
     const user = await context.$auth.fetchUser()
-    console.log(user)
     return user
   }
 }

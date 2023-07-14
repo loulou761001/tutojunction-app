@@ -34,6 +34,7 @@ export default {
 
   async fetch() {
     await this.fillCategories()
+    console.log('filled')
   },
   methods: {
     ...mapActions(['fillCategories']),

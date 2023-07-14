@@ -87,11 +87,19 @@ a{
 .btn {
   border-radius: $rad;
   padding: 10px $pad-min;
-  font-weight: 600  ;
+  font-weight: 600;
   font-size: 18px;
-  background-color: white;
   transition: 0.2s;
   cursor: pointer;
+  background-color: $brand-light-grey;
+  &.small {
+    padding: 2px $rad;
+    font-size: 14px;
+  }
+  &.border {
+    border: 2px solid $brand-yellow;
+    background-color: white;
+  }
   &:disabled,&[disabled] {
     filter: grayscale(0.5);
   }
@@ -113,8 +121,12 @@ a{
     }
   }
 }
-
-input, input[type=submit],.text-input {
+hr {
+  margin-block: $rad $pad-min;
+  border-top: 2px solid black;
+}
+input, input[type=submit],.text-input,textarea,select
+{
   padding: $rad $pad-min;
   background-color: $brand-light-grey;
   border-radius: $rad;
@@ -125,12 +137,18 @@ input, input[type=submit],.text-input {
     outline: none;
     border:none;
   }
+  option.default {
+    color: $brand-grey;
+  }
 }
 
 .category-name {
   background-color: $brand-light-grey;
   border-radius: $rad;
   padding: $rad;
+  &.selected {
+    background: $brand-yellow;
+  }
   &.small {
     font-size: 16px;
     padding: 3px $rad;
@@ -140,6 +158,25 @@ input, input[type=submit],.text-input {
   }
 }
 
+.error {
+  color: $error-color;
+}
+
+h1,h2,h3,h4,h5,h6 {
+  font-weight: bold;
+}
+h1 {
+  font-size: 40px;
+}
+h2 {
+  font-size: 36px;
+}
+h3 {
+  font-size: 28px;
+}
+h4 {
+  font-size: 24px;
+}
 
 
 

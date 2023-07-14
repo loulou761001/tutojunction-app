@@ -9,11 +9,11 @@
   <!--  </div>-->
   <div class="app-sidebar">
     <div class="app-sidebar--pannel">
-      <h3 class="app-sidebar--pannel_title">Nos catégories</h3>
+      <h4 class="app-sidebar--pannel_title">Nos catégories</h4>
       <nuxt-link
         v-for="cat in categoriesToShow"
         :key="cat._id"
-        :to="'categories/' + cat.slug"
+        :to="'/categories/' + cat.slug"
         class="app-sidebar--pannel_item"
       >
         {{ cat.name }}
@@ -23,7 +23,7 @@
       >
     </div>
     <div class="app-sidebar--pannel">
-      <h3 class="app-sidebar--pannel_title">Rédacteurs recommandés</h3>
+      <h4 class="app-sidebar--pannel_title">Rédacteurs recommandés</h4>
       <UserSmallCard v-for="user in usersToShow" :key="user._id" :user="user" />
     </div>
   </div>

@@ -22,13 +22,16 @@ export default {
     '@fortawesome/fontawesome-svg-core/styles.css',
     '@/assets/scss/global.scss',
     '@/assets/scss/wysiwyg.scss',
+    '@/assets/scss/popup.scss',
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    { src: '~/plugins/filepond.js', ssr: false },
     '~/plugins/fontawesome.js',
     '~/plugins/utils.js',
     '~/plugins/users.js',
+    '~/plugins/flicking.js',
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

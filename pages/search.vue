@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import PopupLoading from '../components/Popup/Loading.vue'
 import loading from '../components/Popup/Loading.vue'
 
@@ -98,6 +98,7 @@ export default {
       })
   },
   computed: {
+    ...mapGetters(['loggedInUser', 'isAuthenticated']),
     loading() {
       return loading
     },
@@ -121,8 +122,14 @@ export default {
       },
     },
   },
+  mounted() {
+    if (!this.isAuthenticated || !this.loggedInUser.confirmed) {
+      this.setConfPopupOpen(true)
+    }
+  },
 
   methods: {
+    ...mapActions(['setConfPopupOpen']),
     paginateNext() {
       this.skip = this.skip + 10
       this.$fetch()

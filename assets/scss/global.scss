@@ -64,7 +64,7 @@ html {
   padding: $pad-min;
 }
 
-a{
+a,.link-style{
   &.no-deco {
     text-decoration: none;
   }

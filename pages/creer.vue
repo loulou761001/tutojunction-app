@@ -153,7 +153,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['getCategories']),
+    ...mapGetters(['getCategories', 'loggedInUser']),
     parentCategories() {
       return this.getCategories.filter((item) => !item.parent)
     },
@@ -178,14 +178,17 @@ export default {
   },
   watch: {},
   mounted() {
-    this.$users.currentUser()
-    if (this.$users.currentUser().role !== 'user') {
+    if (!this.loggedInUser.confirmed) {
+      this.setConfPopupOpen(true)
+    }
+    if (this.loggedInUser.role !== 'user') {
       this.maxCharacters.content = 16000
     }
   },
   methods: {
     ...mapActions({
       addSelectedImg: 'addImg',
+      setConfPopupOpen: 'setConfPopupOpen',
     }),
     addImg(img) {
       if (this.thumbnailMode) {

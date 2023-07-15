@@ -3,6 +3,7 @@ export const state = () => ({
   categories: [],
   addImgState: 0,
   selectedImg: null,
+  confPopupOpen: false,
 })
 
 export const getters = {
@@ -22,6 +23,9 @@ export const getters = {
   getAddImgState(state) {
     return state.addImgState
   },
+  getConfPopupOpen(state) {
+    return state.confPopupOpen
+  },
 }
 
 export const mutations = {
@@ -31,6 +35,9 @@ export const mutations = {
   FILL_SELECTED_IMG(state, payload) {
     state.selectedImg = payload
     state.addImgState++
+  },
+  SET_CONF_POPUP_OPEN(state, payload) {
+    state.confPopupOpen = payload
   },
 }
 
@@ -45,5 +52,9 @@ export const actions = {
   addImg: function ({ commit, state }, img) {
     this.$utils.consoleLog('action', img)
     commit('FILL_SELECTED_IMG', img)
+  },
+  setConfPopupOpen: function ({ commit, state }, payload) {
+    this.$utils.consoleLog('action', payload)
+    commit('SET_CONF_POPUP_OPEN', payload)
   },
 }

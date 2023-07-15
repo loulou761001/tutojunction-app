@@ -15,6 +15,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'Confirm',
   data() {
@@ -22,6 +24,9 @@ export default {
       error: false,
       success: false,
     }
+  },
+  computed: {
+    ...mapGetters(['loggedInUser']),
   },
   mounted() {
     if (!this.$route.query.code) {
@@ -31,7 +36,11 @@ export default {
     }
     const code = this.$route.query.code
 
-    const user = localStorage.getItem('user')
+    let user = localStorage.getItem('user')
+    if (!user) {
+      user = this.loggedInUser
+      user._id = user.id
+    }
     this.$utils.consoleLog(user)
     if (user.confirmed) {
       this.$router.push('/')
@@ -39,8 +48,9 @@ export default {
     }
     this.error = false
     this.$axios
-      .get('/users/' + user._id)
+      .get('/users/findById/' + user._id)
       .then((data) => {
+        console.log(data.data)
         const maxDate = new Date(data.data.confirmation_code_time)
         maxDate.setHours(maxDate.getHours() + 2)
         this.$utils.consoleLog(maxDate)
@@ -52,6 +62,7 @@ export default {
               this.$utils.consoleLog(data)
               this.error = false
               this.success = true
+              this.$auth.fetchUser()
               setTimeout(() => {
                 this.$router.push('/')
               }, 4000)

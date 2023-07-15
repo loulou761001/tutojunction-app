@@ -4,13 +4,7 @@
 
     <div class="tj-header--inner">
       <div v-if="$breakpoints.lLg" class="search-input">
-        <form
-          @submit.prevent="
-            search.query.length > 0
-              ? $router.push('/search?query=' + search.query)
-              : null
-          "
-        >
+        <form @submit.prevent="goSearchPage">
           <input
             v-model="search.query"
             type="text"
@@ -20,15 +14,14 @@
           <font-awesome-icon
             icon="magnifying-glass"
             class="icon"
-            @click="
-              search.query.length > 0
-                ? $router.push('/search?query=' + search.query)
-                : null
-            "
+            @click="goSearchPage()"
           />
         </form>
 
-        <div v-if="search.query.length > 1" class="search-results">
+        <div
+          v-if="search.query.length > 1 && loggedInUser.confirmed === true"
+          class="search-results"
+        >
           <p v-if="search.results.length === 0">Aucun résultat...</p>
           <nuxt-link
             v-for="item in search.results"
@@ -65,13 +58,7 @@
           v-if="!$breakpoints.lLg"
           class="tj-header--inner--nav--item search-input"
         >
-          <form
-            @submit.prevent="
-              search.query.length > 0
-                ? $router.push('/search?query=' + search.query)
-                : null
-            "
-          >
+          <form @submit.prevent="goSearchPage">
             <input
               v-model="search.query"
               type="text"
@@ -81,11 +68,7 @@
             <font-awesome-icon
               icon="magnifying-glass"
               class="icon"
-              @click="
-                search.query.length > 0
-                  ? $router.push('/search?query=' + search.query)
-                  : null
-              "
+              @click="goSearchPage"
             />
           </form>
 
@@ -116,7 +99,8 @@
           v-if="$auth.loggedIn"
           to="/user"
           class="tj-header--inner--nav--item"
-        ></nuxt-link>
+          ><UserAvatar :avatar="loggedInUser.avatar" size="48px"
+        /></nuxt-link>
         <nuxt-link to="/categories" class="tj-header--inner--nav--item"
           >Nos catégories</nuxt-link
         >
@@ -151,8 +135,11 @@
 
 <script>
 import debounce from 'lodash.debounce'
+import { mapActions, mapGetters } from 'vuex'
+import UserAvatar from './User/Avatar.vue'
 export default {
   name: 'HeaderComp',
+  components: { UserAvatar },
   data() {
     return {
       navOpen: false,
@@ -162,7 +149,21 @@ export default {
       },
     }
   },
+  computed: {
+    ...mapGetters(['loggedInUser', 'isAuthenticated']),
+  },
   methods: {
+    ...mapActions(['setConfPopupOpen']),
+    goSearchPage() {
+      if (this.loggedInUser.confirmed === false) {
+        this.setConfPopupOpen(true)
+        return
+      }
+      if (this.search.query.length === 0) {
+        return
+      }
+      this.$router.push('/search?query=' + this.search.query)
+    },
     searchDebounce: debounce(function () {
       this.searchAutocomplete()
     }, 300),
@@ -189,7 +190,7 @@ export default {
 .tj-header {
   z-index: 2;
   background-color: white;
-  padding: calc(15px + env(safe-area-inset-top)) $pad $pad-min;
+  padding: calc(15px + env(safe-area-inset-top)) $pad-demi $pad-min;
   position: relative;
   padding-block: $pad-min;
   @include box-shadow;

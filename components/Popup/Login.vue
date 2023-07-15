@@ -1,6 +1,12 @@
 <template>
   <component :is="'PopupBase'" class="popup-media">
-    <div class="close" @click="$emit('close')">
+    <div
+      class="close"
+      @click="
+        $emit('close')
+        setConfPopupOpen(false)
+      "
+    >
       <font-awesome-icon icon="fa-xmark" size="xl" />
     </div>
     <p>Tu dois être connecté pour faire ça !</p>
@@ -14,8 +20,13 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   name: 'PopupLogin',
+  methods: {
+    ...mapActions(['setConfPopupOpen']),
+  },
 }
 </script>
 

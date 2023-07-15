@@ -10,6 +10,7 @@
         @click.native="popupOpen = true"
       />
       <h3>{{ user.username }}</h3>
+      <nuxt-link to="/logout" class="btn red">Se déconnecter</nuxt-link>
     </div>
     <div class="user-index--selector">
       <flicking :options="{ align: 'prev' }">

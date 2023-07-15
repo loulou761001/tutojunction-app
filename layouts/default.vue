@@ -9,6 +9,9 @@
   </div>
   <div v-else class="app">
     <HeaderComp />
+    <div v-if="$route.query.banned" class="banned error">
+      <p>Désolé, tu as été banni.</p>
+    </div>
     <div class="app--content flex">
       <nuxt class="app--content_center" />
       <AppSidebar
@@ -20,24 +23,37 @@
       />
       <AppSidebarBasic v-else-if="$breakpoints.lLg" class="app--content_side" />
     </div>
+    <popup-confirm v-if="isAuthenticated && getConfPopupOpen" />
+    <popup-login v-else-if="getConfPopupOpen" />
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import HeaderComp from '../components/Header.vue'
 import AppSidebar from '../components/AppSidebar.vue'
+import PopupLogin from '../components/Popup/Login.vue'
+import PopupConfirm from '../components/Popup/Confirm.vue'
 
 export default {
   name: 'Default',
-  components: { AppSidebar, HeaderComp },
+  components: { PopupConfirm, PopupLogin, AppSidebar, HeaderComp },
 
   async fetch() {
     await this.fillCategories()
-    console.log('filled')
+  },
+
+  computed: {
+    ...mapGetters(['isAuthenticated', 'loggedInUser', 'getConfPopupOpen']),
   },
   methods: {
-    ...mapActions(['fillCategories']),
+    ...mapActions(['fillCategories', 'setConfPopupOpen']),
+  },
+  async $route(to, from) {
+    this.setConfPopupOpen(false)
+    if (this.isAuthenticated && this.loggedInUser.banned) {
+      await this.$router.push('/logout?banned=1')
+    }
   },
 }
 </script>
@@ -47,6 +63,12 @@ export default {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  .banned {
+    width: 100%;
+    padding: $pad-min;
+    background-color: $brand-light-grey;
+    border-bottom: $brand-orange;
+  }
   &--content {
     height: 100%;
     flex-grow: 1;

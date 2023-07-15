@@ -28,6 +28,7 @@ import TutoRow from '../../components/Tuto/Row.vue'
 
 export default {
   name: 'Categories',
+  auth: false,
   components: { TutoRow },
   data() {
     return {

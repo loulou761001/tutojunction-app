@@ -24,9 +24,9 @@
           Ce tuto est en cours de vérification par notre équipe de modération,
           tu recevras un email une fois qu'il sera rendu public.
         </p>
-        <p v-if="loggedInUser.role === 'user'">
+        <p v-if="isAuthenticated && loggedInUser.role === 'user'">
           Marre d'attendre ?
-          <nuxt-link to="/modMail">
+          <nuxt-link to="/modMail?certif=1">
             Clique ici pour nous envoyer un message et demander à devenir un
             rédacteur certifié !</nuxt-link
           >
@@ -34,7 +34,8 @@
       </div>
       <div
         v-if="
-          loggedInUser.role === 'moderator' || loggedInUser.role === 'admin'
+          isAuthenticated &&
+          (loggedInUser.role === 'moderator' || loggedInUser.role === 'admin')
         "
         class="single-article--inner_moderation"
       >
@@ -57,7 +58,11 @@
         </button>
       </div>
       <div
-        v-if="loggedInUser._id === article.author._id"
+        v-if="
+          isAuthenticated &&
+          loggedInUser.id === article.author._id &&
+          !(loggedInUser.role === 'moderator' || loggedInUser.role === 'admin')
+        "
         class="single-article--inner_moderation"
       >
         <p v-if="!article.published_at">
@@ -98,6 +103,29 @@
       <hr />
       <div v-html="article.content"></div>
       <hr />
+      <div class="single-article--inner_like">
+        <p>
+          Si tu as aimé cet article, n'hésite pas à lui donner un coup de pouce
+          en le likant !
+        </p>
+        <div class="single-article--inner_like_inner">
+          <div @click="like">
+            <font-awesome-icon
+              v-if="alreadyLiked"
+              style="color: #ffcd29"
+              icon="fa-solid fa-heart"
+              size="xl"
+            />
+            <font-awesome-icon
+              v-else
+              style="color: #cfcfcf"
+              icon="fa-solid fa-heart"
+              size="xl"
+            />
+          </div>
+          <span>{{ article.liked_by.length }}</span>
+        </div>
+      </div>
       <CommentList :comments="article.comments" />
       <TutoRow
         v-if="
@@ -120,6 +148,7 @@
       "
       @delete="deleteArticle"
     />
+    <popup-login v-if="loginPopup" @close="loginPopup = false" />
   </div>
 </template>
 
@@ -130,10 +159,13 @@ import PopupDelete from '../../components/Popup/Delete.vue'
 import TutoRow from '../../components/Tuto/Row.vue'
 import SpinnerLoader from '../../components/SpinnerLoader.vue'
 import CommentList from '../../components/Comments/List.vue'
+import PopupLogin from '../../components/Popup/Login.vue'
 
 export default {
+  auth: false,
   name: 'TutoSingle',
   components: {
+    PopupLogin,
     CommentList,
     SpinnerLoader,
     TutoRow,
@@ -146,6 +178,7 @@ export default {
         data: [],
         loading: true,
       },
+      loginPopup: false,
       article: {},
       error: false,
       loading: false,
@@ -165,7 +198,7 @@ export default {
     try {
       const article = await this.$axios.get(url)
       this.article = article.data
-      console.log('articles', article.data)
+      await this.findSimilar()
     } catch (e) {
       this.error = true
       this.$utils.consoleError('error', e)
@@ -173,18 +206,11 @@ export default {
   },
   computed: {
     ...mapGetters(['loggedInUser', 'isAuthenticated']),
+    alreadyLiked() {
+      return this.article.liked_by.includes(this.loggedInUser.id)
+    },
   },
   mounted() {
-    console.log(this.article.comments)
-    this.$axios
-      .post('articles/findSimilar', { article: this.article })
-      .then((data) => {
-        this.$utils.consoleLog('similar', data)
-        this.similarTutos.data = data.data
-      })
-      .finally(() => {
-        this.similarTutos.loading = false
-      })
     //   INCREMENT VIEW COUNT
     setTimeout(function () {
       this.$axios
@@ -198,6 +224,17 @@ export default {
     }, 10000)
   },
   methods: {
+    async findSimilar() {
+      await this.$axios
+        .post('articles/findSimilar', { article: this.article })
+        .then((data) => {
+          this.$utils.consoleLog('similar', data)
+          this.similarTutos.data = data.data
+        })
+        .finally(() => {
+          this.similarTutos.loading = false
+        })
+    },
     deleteArticle() {
       this.deleting.loading = true
       this.$axios
@@ -211,6 +248,39 @@ export default {
         .finally(() => {
           this.deleting.loading = false
         })
+    },
+    like() {
+      if (!this.isAuthenticated) {
+        this.loginPopup = true
+        return
+      }
+      if (!this.alreadyLiked) {
+        this.article.liked_by.push(this.loggedInUser.id)
+        this.$axios
+          .put('articles/like/' + this.$route.params.id, {
+            user: this.loggedInUser.id,
+          })
+          .then((data) => {
+            this.$utils.consoleLog(data)
+          })
+          .catch((e) => {
+            this.consoleError(e)
+          })
+      } else {
+        this.article.liked_by = this.article.liked_by.filter(
+          (item) => item !== this.loggedInUser.id
+        )
+        this.$axios
+          .put('articles/unlike/' + this.$route.params.id, {
+            user: this.loggedInUser.id,
+          })
+          .then((data) => {
+            this.$utils.consoleLog(data)
+          })
+          .catch((e) => {
+            this.consoleError(e)
+          })
+      }
     },
     unpublish() {
       this.loading = true
@@ -257,6 +327,14 @@ export default {
         > * {
           margin: auto;
         }
+      }
+    }
+    &_like {
+      &_inner {
+        display: flex;
+        align-items: center;
+        gap: $rad;
+        font-weight: bold;
       }
     }
     &_warning {

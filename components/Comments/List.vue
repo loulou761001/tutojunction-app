@@ -1,5 +1,5 @@
 <template>
-  <div class="comment-list">
+  <div id="comment-list" class="comment-list">
     <div v-if="isAuthenticated" class="comment-list--field">
       <h4>Laisse un commentaire sur ce guide !</h4>
       <div class="comment-list--field--info">
@@ -15,6 +15,12 @@
       </button>
       <p v-if="error.status" class="error">{{ errorMessage[error.message] }}</p>
     </div>
+    <div class="comment-list--login">
+      <nuxt-link to="/register"
+        >Inscris ou connecte toi pour commenter !</nuxt-link
+      >
+    </div>
+
     <p v-if="comments.length === 0">Aucun commentaire pour le moment.</p>
     <CommentSingle
       v-for="comment in comments"
@@ -92,6 +98,11 @@ export default {
 
 <style lang="scss" scoped>
 .comment-list {
+  &--login {
+    display: flex;
+    margin-bottom: $pad-min;
+    font-weight: bold;
+  }
   &--field {
     &--info {
       display: flex;

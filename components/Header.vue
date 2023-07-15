@@ -3,9 +3,54 @@
     <nuxt-link to="/" class="tj-header_logo no-deco"><tj-logo /></nuxt-link>
 
     <div class="tj-header--inner">
-      <div class="input">
-        <input type="text" placeholder="Recherche..." />
-        <font-awesome-icon icon="magnifying-glass" class="icon" />
+      <div v-if="$breakpoints.lLg" class="search-input">
+        <form
+          @submit.prevent="
+            search.query.length > 0
+              ? $router.push('/search?query=' + search.query)
+              : null
+          "
+        >
+          <input
+            v-model="search.query"
+            type="text"
+            placeholder="Recherche..."
+            @keyup="searchDebounce"
+          />
+          <font-awesome-icon
+            icon="magnifying-glass"
+            class="icon"
+            @click="
+              search.query.length > 0
+                ? $router.push('/search?query=' + search.query)
+                : null
+            "
+          />
+        </form>
+
+        <div v-if="search.query.length > 1" class="search-results">
+          <p v-if="search.results.length === 0">Aucun résultat...</p>
+          <nuxt-link
+            v-for="item in search.results"
+            :key="item._id"
+            :to="'/tuto/' + item._id"
+            class="search-results--item"
+          >
+            <p>{{ item.title }}</p>
+            <span
+              v-for="cat in item.categories"
+              :key="cat._id"
+              class="category-name small"
+              >{{ cat.name }}</span
+            >
+            <span
+              v-for="tag in item.tags.slice(0, 4)"
+              :key="tag"
+              class="category-name small"
+              >{{ tag }}</span
+            >
+          </nuxt-link>
+        </div>
       </div>
       <font-awesome-icon
         v-if="!$breakpoints.lLg"
@@ -16,6 +61,57 @@
         @click="navOpen = !navOpen"
       />
       <nav v-if="$breakpoints.lLg || navOpen" class="tj-header--inner--nav">
+        <div
+          v-if="!$breakpoints.lLg"
+          class="tj-header--inner--nav--item search-input"
+        >
+          <form
+            @submit.prevent="
+              search.query.length > 0
+                ? $router.push('/search?query=' + search.query)
+                : null
+            "
+          >
+            <input
+              v-model="search.query"
+              type="text"
+              placeholder="Recherche..."
+              @keyup="searchDebounce"
+            />
+            <font-awesome-icon
+              icon="magnifying-glass"
+              class="icon"
+              @click="
+                search.query.length > 0
+                  ? $router.push('/search?query=' + search.query)
+                  : null
+              "
+            />
+          </form>
+
+          <div v-if="search.query.length > 1" class="search-results">
+            <p v-if="search.results.length === 0">Aucun résultat...</p>
+            <div
+              v-for="item in search.results"
+              :key="item._id"
+              class="search-results--item"
+            >
+              <p>{{ item.title }}</p>
+              <span
+                v-for="cat in item.categories"
+                :key="cat._id"
+                class="category-name small"
+                >{{ cat.name }}</span
+              >
+              <span
+                v-for="tag in item.tags.slice(0, 4)"
+                :key="tag"
+                class="category-name small"
+                >{{ tag }}</span
+              >
+            </div>
+          </div>
+        </div>
         <nuxt-link
           v-if="$auth.loggedIn"
           to="/user"
@@ -29,6 +125,12 @@
           to="/creer"
           class="tj-header--inner--nav--item"
           >Rédige un article !</nuxt-link
+        >
+        <nuxt-link
+          v-if="$auth.loggedIn && $breakpoints.sMd"
+          to="/modmail"
+          class="tj-header--inner--nav--item"
+          >Un probleme, des retours ? Contacte l'équipe !</nuxt-link
         >
         <nuxt-link
           v-if="!$auth.loggedIn"
@@ -48,15 +150,35 @@
 </template>
 
 <script>
+import debounce from 'lodash.debounce'
 export default {
   name: 'HeaderComp',
   data() {
     return {
       navOpen: false,
+      search: {
+        query: '',
+        results: [],
+      },
     }
+  },
+  methods: {
+    searchDebounce: debounce(function () {
+      this.searchAutocomplete()
+    }, 300),
+    searchAutocomplete() {
+      if (this.search.query.trim().length === 0) return
+      this.$axios
+        .post('articles/autocomplete', { query: this.search.query.trim() })
+        .then((data) => {
+          console.log(data)
+          this.search.results = data.data
+        })
+    },
   },
   watch: {
     $route(to, from) {
+      this.search.query = ''
       this.navOpen = false
     },
   },
@@ -90,11 +212,13 @@ export default {
     @include min-sm {
       padding-left: 80px;
     }
+
     .burger {
       margin-left: $pad-min;
       cursor: pointer;
+      margin-left: auto;
       @include min-md {
-        margin-inline: $pad-demi;
+        margin-inline: auto $pad-demi;
       }
     }
 
@@ -110,14 +234,17 @@ export default {
       //margin-left: auto;
       gap: $pad-min;
       padding-inline: $pad-min;
+      padding-block: $pad-demi $pad-min;
       &--item {
         margin: auto;
+        text-align: center;
       }
 
       @include max-lg {
         border-bottom: 1px $brand-grey solid;
       }
       @include min-lg {
+        padding-top: 0;
         max-width: 500px;
         position: static;
         padding-left: $pad-min;
@@ -126,21 +253,51 @@ export default {
         flex-direction: row;
         .tj-header--inner--nav--item {
           margin: auto;
+          text-align: left;
         }
       }
     }
-    .input {
+
+    .search-results {
+      border: 1px solid $brand-grey;
+      z-index: 3;
+      top: 100%;
+      position: absolute;
+      width: 100%;
+      max-width: 500px;
+      padding: $rad;
+      background-color: white;
+      border-radius: $rad;
+      display: flex;
+      flex-direction: column;
+      gap: $rad;
+      &--item {
+        cursor: pointer;
+        padding: $rad;
+        border-radius: $rad;
+
+        &:hover {
+          background-color: $brand-light-grey;
+        }
+      }
+    }
+    .search-input {
       width: 100%;
       max-width: 500px;
       margin: auto;
+      position: relative;
+      form {
+        position: relative;
+      }
       input {
         width: 100%;
         padding-right: $pad-demi;
         background-color: $brand-light-grey;
         border-radius: $rad;
       }
-      position: relative;
+
       .icon {
+        cursor: pointer;
         position: absolute;
         right: 10px;
         top: 50%;

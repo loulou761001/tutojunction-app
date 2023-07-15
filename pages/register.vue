@@ -100,6 +100,7 @@
 <script>
 export default {
   name: 'Register',
+  auth: false,
   data() {
     return {
       registerSuccess: false,

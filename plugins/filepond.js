@@ -8,13 +8,15 @@ import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size'
 import 'filepond/dist/filepond.min.css'
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css'
 import 'filepond-plugin-media-preview/dist/filepond-plugin-media-preview.min.css'
+import FilePondPluginImageCrop from 'filepond-plugin-image-crop'
 
 const FilePond = VueFilePond(
   FilePondPluginFileValidateType,
   FilePondPluginImagePreview,
   FilePondPluginFileMetadata,
   FilePondPluginMediaPreview,
-  FilePondPluginFileValidateSize
+  FilePondPluginFileValidateSize,
+  FilePondPluginImageCrop
 )
 
 Vue.component(FilePond)

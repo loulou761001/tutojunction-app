@@ -131,7 +131,7 @@ export default {
       maxCharacters: {
         title: 300,
         tags: 30,
-        content: 8000,
+        content: 10000,
       },
       loading: false,
       articleData: {
@@ -179,6 +179,9 @@ export default {
   watch: {},
   mounted() {
     this.$users.currentUser()
+    if (this.$users.currentUser().role !== 'user') {
+      this.maxCharacters.content = 16000
+    }
   },
   methods: {
     ...mapActions({

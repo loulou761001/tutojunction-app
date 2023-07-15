@@ -1,7 +1,10 @@
 <template>
   <div v-if="error"><p>error</p></div>
   <div v-else class="single-article">
-    <div class="single-article--inner">
+    <div v-if="$fetchState.pending">
+      <SpinnerLoader />
+    </div>
+    <div v-else class="single-article--inner">
       <div class="single-article--inner_top">
         <div>
           <nuxt-link to="/">Tutos</nuxt-link>
@@ -20,6 +23,13 @@
         <p>
           Ce tuto est en cours de vérification par notre équipe de modération,
           tu recevras un email une fois qu'il sera rendu public.
+        </p>
+        <p v-if="loggedInUser.role === 'user'">
+          Marre d'attendre ?
+          <nuxt-link to="/modMail">
+            Clique ici pour nous envoyer un message et demander à devenir un
+            rédacteur certifié !</nuxt-link
+          >
         </p>
       </div>
       <div
@@ -68,6 +78,7 @@
         {{ article.title }}
       </h1>
       <div class="single-article--inner_author">
+        <p>Posté par :</p>
         <p>{{ article.author.username }}</p>
       </div>
       <img
@@ -87,11 +98,13 @@
       <hr />
       <div v-html="article.content"></div>
       <hr />
+      <CommentList :comments="article.comments" />
       <TutoRow
         v-if="
           similarTutos.loading === false &&
           similarTutos.data.filter((item) => item._id !== article._id).length
         "
+        :small="true"
         :tutos="similarTutos.data.filter((item) => item._id !== article._id)"
         title="Tutos similaires :"
       />
@@ -116,10 +129,17 @@ import PopupLoading from '../../components/Popup/Loading.vue'
 import PopupDelete from '../../components/Popup/Delete.vue'
 import TutoRow from '../../components/Tuto/Row.vue'
 import SpinnerLoader from '../../components/SpinnerLoader.vue'
+import CommentList from '../../components/Comments/List.vue'
 
 export default {
   name: 'TutoSingle',
-  components: { SpinnerLoader, TutoRow, PopupDelete, PopupLoading },
+  components: {
+    CommentList,
+    SpinnerLoader,
+    TutoRow,
+    PopupDelete,
+    PopupLoading,
+  },
   data() {
     return {
       similarTutos: {
@@ -145,6 +165,7 @@ export default {
     try {
       const article = await this.$axios.get(url)
       this.article = article.data
+      console.log('articles', article.data)
     } catch (e) {
       this.error = true
       this.$utils.consoleError('error', e)
@@ -153,24 +174,8 @@ export default {
   computed: {
     ...mapGetters(['loggedInUser', 'isAuthenticated']),
   },
-  watch: {
-    success: function () {
-      //   INCREMENT VIEW COUNT
-      if (this.success) {
-        setTimeout(function () {
-          this.$axios
-            .put('/articles/incrementViews/' + this.$route.params.id)
-            .then((data) => {
-              this.$utils.consoleLog('Views incremented', data.data)
-            })
-            .catch((e) => {
-              this.$utils.consoleError('Views incrementation error', e)
-            })
-        }, 10000)
-      }
-    },
-  },
   mounted() {
+    console.log(this.article.comments)
     this.$axios
       .post('articles/findSimilar', { article: this.article })
       .then((data) => {
@@ -180,6 +185,17 @@ export default {
       .finally(() => {
         this.similarTutos.loading = false
       })
+    //   INCREMENT VIEW COUNT
+    setTimeout(function () {
+      this.$axios
+        .put('/articles/incrementViews/' + this.$route.params.id, {})
+        .then((data) => {
+          this.$utils.consoleLog('Views incremented', data.data)
+        })
+        .catch((e) => {
+          this.$utils.consoleError('Views incrementation error', e)
+        })
+    }, 10000)
   },
   methods: {
     deleteArticle() {
@@ -267,6 +283,7 @@ export default {
       flex-wrap: wrap;
     }
     &_thumbnail {
+      border-radius: $rad;
       width: 100%;
     }
     &_title {

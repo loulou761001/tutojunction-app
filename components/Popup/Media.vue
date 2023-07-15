@@ -79,6 +79,8 @@
           :allow-multiple="false"
           :allow-file-size-validation="true"
           :max-file-size="'4MB'"
+          :allow-image-crop="true"
+          :image-crop-aspect-ratio="category === 'profile' ? '1:1' : null"
           accepted-file-types="image/jpeg, image/png, image/gif"
           :server="server"
           @init="handleFilePondInit"
@@ -140,8 +142,14 @@ export default {
       }
     },
     server() {
+      let url
+      if (this.category === 'profile') {
+        url = 'http://localhost:1337/files/profile'
+      } else {
+        url = 'http://localhost:1337/files/'
+      }
       return {
-        url: 'http://localhost:1337/files/',
+        url,
         process: {
           headers: this.headers,
         },

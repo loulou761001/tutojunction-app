@@ -5,7 +5,11 @@
       :class="{ small: small }"
       :style="{ backgroundImage: 'url(' + tuto.thumbnail.url + ')' }"
     >
-      <h4 v-if="small" class="tuto-card_header_title">{{ tuto.title }}</h4>
+      <h4 v-if="small" class="tuto-card_header_title">
+        {{
+          tuto.title.length > 16 ? tuto.title.slice(0, 16) + '...' : tuto.title
+        }}
+      </h4>
     </div>
     <div v-if="!small" class="tuto-card--info">
       <h4 :title="tuto.title.length > 16 ? tuto.title : null">
@@ -66,6 +70,9 @@ export default {
   width: 25%;
   min-width: 200px;
   max-width: 260px;
+  &:not(:last-child) {
+    margin-right: $pad-min;
+  }
   hr {
     border-color: $brand-grey;
   }
@@ -77,15 +84,14 @@ export default {
     height: 160px;
     //margin-bottom: $pad-min;
     display: flex;
+    position: relative;
     &.small::after {
       z-index: 2;
       content: '';
       position: absolute;
       left: 0;
       bottom: 0;
-      width: 25%;
-      min-width: 200px;
-      max-width: 260px;
+      width: 100%;
       height: 80%;
       border-radius: $rad;
       background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5));

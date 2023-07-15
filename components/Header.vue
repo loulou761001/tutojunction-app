@@ -16,6 +16,11 @@
         @click="navOpen = !navOpen"
       />
       <nav v-if="$breakpoints.lLg || navOpen" class="tj-header--inner--nav">
+        <nuxt-link
+          v-if="$auth.loggedIn"
+          to="/user"
+          class="tj-header--inner--nav--item"
+        ></nuxt-link>
         <nuxt-link to="/categories" class="tj-header--inner--nav--item"
           >Nos catégories</nuxt-link
         >
@@ -70,6 +75,7 @@ export default {
     padding-block: $pad-demi + $rad;
   }
   &_logo {
+    z-index: 2;
     position: absolute;
     top: $pad-min;
     left: $pad-min;

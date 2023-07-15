@@ -212,9 +212,9 @@ export default {
   },
   mounted() {
     //   INCREMENT VIEW COUNT
-    setTimeout(function () {
+    setTimeout(() => {
       this.$axios
-        .put('/articles/incrementViews/' + this.$route.params.id, {})
+        .get('/articles/incrementViews/' + this.$route.params.id, {})
         .then((data) => {
           this.$utils.consoleLog('Views incremented', data.data)
         })

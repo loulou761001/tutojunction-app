@@ -17,7 +17,15 @@
           tuto.title.length > 16 ? tuto.title.slice(0, 16) + '...' : tuto.title
         }}
       </h4>
-      <p>{{ new Date(tuto.created_at).toLocaleDateString('fr') }}</p>
+      <p>
+        {{ new Date(tuto.published_at).toLocaleDateString('fr') }},
+        {{
+          new Date(tuto.published_at).toLocaleTimeString('fr', {
+            hour: '2-digit',
+            minute: '2-digit',
+          })
+        }}
+      </p>
       <div class="flex" style="align-items: center; gap: 5px">
         <UserAvatar :avatar="tuto.author.avatar" /><span>{{
           tuto.author.username

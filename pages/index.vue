@@ -20,12 +20,14 @@
         title="Abonnements"
         :tutos="articles.subbed"
       />
-      <hr class="grey" />
       <tuto-row
         v-if="isAuthenticated && articles.followedCats.length"
         title="Catégories suivies"
         :tutos="articles.followedCats"
       />
+      <tuto-row title="Derniers articles" :tutos="articles.latest" />
+      <tuto-row title="Les plus aimés" :tutos="articles.likes" />
+      <tuto-row title="Les plus vus" :tutos="articles.views" />
     </div>
   </div>
 </template>
@@ -46,12 +48,36 @@ export default {
         success: false,
       },
       articles: {
+        views: [],
+        latest: [],
+        likes: [],
         subbed: [],
         followedCats: [],
       },
     }
   },
   async fetch() {
+    try {
+      const latest = await this.$axios.get('articles/latest?limit=10')
+      this.$utils.consoleLog('latest', latest.data)
+      this.articles.latest = latest.data
+    } catch (e) {
+      this.$utils.consoleError(e)
+    }
+    try {
+      const views = await this.$axios.get('articles/byViews?limit=10')
+      this.$utils.consoleLog('views', views.data)
+      this.articles.views = views.data
+    } catch (e) {
+      this.$utils.consoleError(e)
+    }
+    try {
+      const likes = await this.$axios.get('articles/byLikes?limit=10')
+      this.$utils.consoleLog('likes', likes.data)
+      this.articles.likes = likes.data
+    } catch (e) {
+      this.$utils.consoleError(e)
+    }
     if (this.isAuthenticated) {
       try {
         const subbedArticles = await this.$axios.get(
@@ -77,20 +103,20 @@ export default {
   },
 
   mounted() {
-    console.log(this.$store.getters.loggedInUser)
+    this.$utils.consoleLog(this.$store.getters.loggedInUser)
     this.$utils.consoleLog(process.env.NODE_ENV)
   },
 
   methods: {
     sendConfMail() {
-      console.log('se d')
+      this.$utils.consoleLog('se d')
       if (
         this.emailConfirm.success === true ||
         this.emailConfirm.loading === true
       ) {
         return
       }
-      console.log('send')
+      this.$utils.consoleLog('send')
       this.emailConfirm.loading = true
       this.$axios
         .get('users/resendMail')
@@ -105,11 +131,11 @@ export default {
         })
     },
     checkLoggedIn() {
-      console.log('test')
+      this.$utils.consoleLog('test')
       this.$axios
         .get('/users/checkLoggedIn')
         .then((data) => {
-          console.log(data)
+          this.$utils.consoleLog(data)
         })
         .catch((e) => {
           console.error(e)

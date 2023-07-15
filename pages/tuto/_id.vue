@@ -162,7 +162,6 @@ import CommentList from '../../components/Comments/List.vue'
 import PopupLogin from '../../components/Popup/Login.vue'
 
 export default {
-  auth: false,
   name: 'TutoSingle',
   components: {
     PopupLogin,
@@ -204,6 +203,12 @@ export default {
       this.$utils.consoleError('error', e)
     }
   },
+  head() {
+    return {
+      title: this.article.title + ' - TutoJunction',
+    }
+  },
+  auth: false,
   computed: {
     ...mapGetters(['loggedInUser', 'isAuthenticated']),
     alreadyLiked() {

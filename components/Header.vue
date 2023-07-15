@@ -124,7 +124,7 @@
         >
         <nuxt-link
           v-if="!$auth.loggedIn"
-          to="/register"
+          to="/login"
           class="tj-header--inner--nav--item"
           >Je me connecte !</nuxt-link
         >

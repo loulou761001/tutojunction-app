@@ -3,9 +3,9 @@ export default {
   ssr: true,
   target: 'static',
   head: {
-    title: 'tj_app',
+    title: 'Bienvenue sur TutoJunction !',
     htmlAttrs: {
-      lang: 'en',
+      lang: 'fr',
     },
 
     meta: [

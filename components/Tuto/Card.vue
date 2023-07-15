@@ -18,6 +18,11 @@
         }}
       </h4>
       <p>{{ new Date(tuto.created_at).toLocaleDateString('fr') }}</p>
+      <div class="flex" style="align-items: center; gap: 5px">
+        <UserAvatar :avatar="tuto.author.avatar" /><span>{{
+          tuto.author.username
+        }}</span>
+      </div>
     </div>
     <hr v-if="!small" />
     <div v-if="!small" class="tuto-card--meta">
@@ -41,9 +46,11 @@
 
 <script>
 import categories from '../../pages/categories/index.vue'
+import UserAvatar from '../User/Avatar.vue'
 
 export default {
   name: 'TutoCard',
+  components: { UserAvatar },
   props: {
     tuto: {
       type: Object,

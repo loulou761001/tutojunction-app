@@ -24,7 +24,7 @@
     </div>
     <div class="app-sidebar--pannel">
       <h4 class="app-sidebar--pannel_title">Rédacteurs recommandés</h4>
-      <UserSmallCard v-for="user in usersToShow" :key="user._id" :user="user" />
+      <UserSmallCard v-for="user in usersReco" :key="user._id" :user="user" />
     </div>
     <div class="app-sidebar--pannel">
       <h4 class="app-sidebar--pannel_title">Un probleme, des retours ?</h4>
@@ -48,8 +48,15 @@ export default {
   data() {
     return {
       users: [],
+      usersReco: [],
       categories: [],
     }
+  },
+  async fetch() {
+    await this.$axios.get('/users/recommended').then((data) => {
+      console.log('data reco', data.data)
+      this.usersReco = data.data
+    })
   },
   computed: {
     ...mapGetters(['isAuthenticated', 'loggedInUser']),

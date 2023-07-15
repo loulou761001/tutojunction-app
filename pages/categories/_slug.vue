@@ -3,7 +3,20 @@
   <div v-else-if="error" class="category-page_error">404</div>
   <div v-else class="category-page">
     <div class="category-page--header">
-      <h1>{{ category.name }}</h1>
+      <h1>
+        {{ category.name }}
+        <button
+          v-if="!follows"
+          :disabled="loading"
+          class="small btn"
+          @click="followCat"
+        >
+          Suivre
+        </button>
+        <button v-else :disabled="loading" class="small btn" @click="followCat">
+          Ne plus suivre
+        </button>
+      </h1>
     </div>
     <div v-if="!category.parent && subs.length">
       <nuxt-link
@@ -39,6 +52,7 @@ export default {
       category: null,
       articles: [],
       subs: [],
+      loading: false,
     }
   },
 
@@ -65,7 +79,43 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({ getCategories: 'getCategories' }),
+    ...mapGetters({
+      getCategories: 'getCategories',
+      loggedInUser: 'loggedInUser',
+    }),
+    follows() {
+      return this.loggedInUser.categories_followed.includes(this.category._id)
+    },
+  },
+  methods: {
+    followCat() {
+      this.loading = true
+      if (!this.follows) {
+        this.$axios
+          .put('users/followCat', { category: this.category._id })
+          .then(async (data) => {
+            await this.$auth.fetchUser()
+          })
+          .catch((err) => {
+            this.$utils.consoleError(err)
+          })
+          .finally(() => {
+            this.loading = false
+          })
+      } else {
+        this.$axios
+          .put('users/unfollowCat', { category: this.category._id })
+          .then(async (data) => {
+            await this.$auth.fetchUser()
+          })
+          .catch((err) => {
+            this.$utils.consoleError(err)
+          })
+          .finally(() => {
+            this.loading = false
+          })
+      }
+    },
   },
 }
 </script>

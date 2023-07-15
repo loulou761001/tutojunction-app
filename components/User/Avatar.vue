@@ -39,6 +39,7 @@ export default {
 
 <style lang="scss" scoped>
 .avatar {
+  overflow: hidden;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

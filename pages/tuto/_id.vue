@@ -153,7 +153,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import PopupLoading from '../../components/Popup/Loading.vue'
 import PopupDelete from '../../components/Popup/Delete.vue'
 import TutoRow from '../../components/Tuto/Row.vue'
@@ -224,6 +224,7 @@ export default {
     }, 10000)
   },
   methods: {
+    ...mapActions(['setConfPopupOpen']),
     async findSimilar() {
       await this.$axios
         .post('articles/findSimilar', { article: this.article })
@@ -252,6 +253,10 @@ export default {
     like() {
       if (!this.isAuthenticated) {
         this.loginPopup = true
+        return
+      }
+      if (!this.loggedInUser.confirmed) {
+        this.setConfPopupOpen(true)
         return
       }
       if (!this.alreadyLiked) {

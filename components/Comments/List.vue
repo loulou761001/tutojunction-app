@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import UserAvatar from '../User/Avatar.vue'
 import CommentSingle from './Single.vue'
 
@@ -60,7 +60,12 @@ export default {
     ...mapGetters(['loggedInUser', 'isAuthenticated']),
   },
   methods: {
+    ...mapActions(['setConfPopupOpen']),
     checkComment() {
+      if (!this.loggedInUser.confirmed) {
+        this.setConfPopupOpen(true)
+        return
+      }
       this.loading = true
       this.error.message = null
       this.error.status = false

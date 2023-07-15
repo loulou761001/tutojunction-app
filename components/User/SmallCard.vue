@@ -1,8 +1,12 @@
 <template>
-  <div class="user-small-card">
-    <div></div>
+  <nuxt-link :to="'/user/' + user.slug" class="user-small-card">
+    <user-avatar :avatar="user.avatar" size="48px" />
     <div class="user-small-card--info">
-      <span>{{ user.username }}</span>
+      <span :title="user.username.length >= 24 ? user.username : null">{{
+        user.username.length >= 24
+          ? user.username.slice(0, 21) + '...'
+          : user.username
+      }}</span>
     </div>
     <button
       v-if="isAuthenticated"
@@ -12,15 +16,17 @@
     >
       {{ isFollowed ? 'Suivi' : 'Suivre' }}
     </button>
-  </div>
+  </nuxt-link>
 </template>
 c
 
 <script>
 import { mapGetters } from 'vuex'
+import UserAvatar from './Avatar.vue'
 
 export default {
   name: 'UserSmallCard',
+  components: { UserAvatar },
   props: {
     user: {
       type: Object,
@@ -72,6 +78,7 @@ export default {
   padding: $rad;
   margin-bottom: $rad;
   &--info {
+    margin-left: $rad;
     margin-right: auto;
   }
 }

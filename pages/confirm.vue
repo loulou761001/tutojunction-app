@@ -37,6 +37,7 @@ export default {
     const code = this.$route.query.code
 
     let user = localStorage.getItem('user')
+    user = JSON.parse(user)
     if (!user) {
       user = this.loggedInUser
       user._id = user.id
@@ -46,6 +47,7 @@ export default {
       this.$router.push('/')
       return
     }
+    console.log('user', user._id)
     this.error = false
     this.$axios
       .get('/users/findById/' + user._id)

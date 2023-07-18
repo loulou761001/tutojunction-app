@@ -4,42 +4,20 @@
   </div>
   <div v-else class="app-sidebar">
     <div class="app-sidebar--pannel">
-      <h4 class="app-sidebar--pannel_title">Nos catégories</h4>
-      <nuxt-link
-        v-for="cat in categoriesToShow"
-        :key="cat._id"
-        :to="'/categories/' + cat.slug"
-        class="app-sidebar--pannel_item"
-      >
-        {{ cat.name }}
-      </nuxt-link>
-      <nuxt-link v-if="categories.length > 10" to="/categories"
-        >Voir plus</nuxt-link
-      >
-    </div>
-    <div v-if="getRecoUsers" class="app-sidebar--pannel">
-      <h4 class="app-sidebar--pannel_title">Rédacteurs recommandés</h4>
-      <UserSmallCard
-        v-for="user in getRecoUsers"
-        :key="user._id"
-        :user="user"
-      />
-    </div>
-    <div class="app-sidebar--pannel">
-      <h4 class="app-sidebar--pannel_title">Un probleme, des retours ?</h4>
+      <h4 class="app-sidebar--pannel_title">
+        Consulter les messages des utilisateurs
+      </h4>
       <nuxt-link
         v-if="$auth.loggedIn"
         to="/modmail"
         class="app-sidebar--pannel_item"
-        >Contacte l'équipe !</nuxt-link
+        >Messages des utilisateurs</nuxt-link
       >
-    </div>
-    <div class="app-sidebar--pannel">
-      <h4 class="app-sidebar--pannel_title">
-        consulter nos mentions légales ?
-      </h4>
-      <nuxt-link to="/cgu" class="app-sidebar--pannel_item"
-        >Nos mentions légales</nuxt-link
+      <nuxt-link
+        v-if="$auth.loggedIn"
+        to="/modmail"
+        class="app-sidebar--pannel_item"
+        >Demandes de certifications</nuxt-link
       >
     </div>
     <div v-if="isMod" class="app-sidebar--pannel">
@@ -52,7 +30,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'AdminAppSidebar',
@@ -60,7 +38,6 @@ export default {
   data() {
     return {
       users: [],
-      categories: [],
     }
   },
   async fetch() {
@@ -78,22 +55,9 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['isAuthenticated', 'loggedInUser', 'getRecoUsers', 'isMod']),
-    ...mapGetters({ getCategories: 'getCategories' }),
-    parentCategories() {
-      return this.getCategories.filter((item) => !item.parent)
-    },
-
-    categoriesToShow() {
-      return this.parentCategories.slice(0, 10)
-    },
-    usersToShow() {
-      return this.users.slice(0, 6)
-    },
+    ...mapGetters(['isAuthenticated', 'loggedInUser', 'isMod']),
   },
-  methods: {
-    ...mapActions(['fillRecoUsers']),
-  },
+  methods: {},
 }
 </script>
 

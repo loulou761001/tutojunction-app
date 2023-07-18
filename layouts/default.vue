@@ -1,6 +1,6 @@
 <template>
   <div v-if="$fetch.pending" class="loading">
-    <SpinnerLoader />
+    <PopupLoading />
   </div>
   <div v-else class="app">
     <HeaderComp />
@@ -44,10 +44,12 @@ import AppSidebar from '../components/AppSidebar.vue'
 import PopupLogin from '../components/Popup/Login.vue'
 import PopupConfirm from '../components/Popup/Confirm.vue'
 import SpinnerLoader from '../components/SpinnerLoader.vue'
+import PopupLoading from '../components/Popup/Loading.vue'
 
 export default {
   name: 'Default',
   components: {
+    PopupLoading,
     SpinnerLoader,
     PopupConfirm,
     PopupLogin,

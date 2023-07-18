@@ -21,24 +21,26 @@
           class="tj-header--inner--nav--item"
           ><UserAvatar :avatar="loggedInUser.avatar" size="48px"
         /></nuxt-link>
+        <nuxt-link to="/admin/tutos" class="tj-header--inner--nav--item"
+          >Les articles</nuxt-link
+        >
         <nuxt-link to="/admin/categories" class="tj-header--inner--nav--item"
           >Les catégories</nuxt-link
         >
         <nuxt-link
-          v-if="$auth.loggedIn"
-          to="/admin/modmails"
-          class="tj-header--inner--nav--item"
-          >Messages d'utilisateurs</nuxt-link
-        >
-        <nuxt-link
-          v-if="$auth.loggedIn && $breakpoints.sMd"
+          v-if="$breakpoints.sMd"
           to="/admin/modmail"
           class="tj-header--inner--nav--item"
-          >Un probleme, des retours ? Contacte l'équipe !</nuxt-link
+          >Messages d'utilisateurs</nuxt-link
+        ><nuxt-link
+          v-if="$breakpoints.sMd"
+          to="/admin/certifs"
+          class="tj-header--inner--nav--item"
+          >Les demandes de certification</nuxt-link
         >
         <nuxt-link
           v-if="$breakpoints.sMd"
-          to="/admin"
+          to="/"
           class="tj-header--inner--nav--item"
           >Retour sur le site</nuxt-link
         >

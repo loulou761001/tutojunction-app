@@ -1,6 +1,6 @@
 <template>
   <div class="category-index">
-    <h4>Nos catégories :</h4>
+    <h3>Nos catégories :</h3>
     <div
       v-for="cat in shownCategories"
       :key="cat._id"
@@ -84,6 +84,8 @@ export default {
   padding: $pad-min;
   &--inner {
     &_link {
+      font-size: 16px;
+      font-weight: bold;
     }
     &_card {
       padding-top: $pad-min;

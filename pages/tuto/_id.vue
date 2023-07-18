@@ -33,16 +33,16 @@
         </p>
       </div>
       <div
-        v-if="
-          isAuthenticated &&
-          (loggedInUser.role === 'moderator' || loggedInUser.role === 'admin')
-        "
+        v-if="isAuthenticated && isMod"
         class="single-article--inner_moderation"
       >
         <p v-if="!article.published_at">
           Cet article n'a pas encore été publié.
         </p>
         <p v-else>Cet article est publié.</p>
+        <button class="btn" :disabled="featureLoading" @click="featureTuto()">
+          {{ isFeatured ? 'Ne plus mettre en avant' : 'Mettre en avant' }}
+        </button>
         <button v-if="!article.published_at" class="btn" @click="publish">
           Publier
         </button>
@@ -59,9 +59,7 @@
       </div>
       <div
         v-if="
-          isAuthenticated &&
-          loggedInUser.id === article.author._id &&
-          !(loggedInUser.role === 'moderator' || loggedInUser.role === 'admin')
+          isAuthenticated && loggedInUser.id === article.author._id && !isMod
         "
         class="single-article--inner_moderation"
       >
@@ -84,7 +82,7 @@
       </h1>
       <div class="single-article--inner_author">
         <p>Posté par :</p>
-        <p>{{ article.author.username }}</p>
+        <user-small-card :user="article.author" />
       </div>
       <img
         :src="article.thumbnail.url"
@@ -126,7 +124,7 @@
           <span>{{ article.liked_by.length }}</span>
         </div>
       </div>
-      <CommentList :comments="article.comments" />
+      <CommentList />
       <TutoRow
         v-if="
           similarTutos.loading === false &&
@@ -160,10 +158,12 @@ import TutoRow from '../../components/Tuto/Row.vue'
 import SpinnerLoader from '../../components/SpinnerLoader.vue'
 import CommentList from '../../components/Comments/List.vue'
 import PopupLogin from '../../components/Popup/Login.vue'
+import UserSmallCard from '../../components/User/SmallCard.vue'
 
 export default {
   name: 'TutoSingle',
   components: {
+    UserSmallCard,
     PopupLogin,
     CommentList,
     SpinnerLoader,
@@ -181,6 +181,7 @@ export default {
       article: {},
       error: false,
       loading: false,
+      featureLoading: false,
       deleting: {
         popup: false,
         loading: false,
@@ -192,8 +193,10 @@ export default {
       ? 'articles/findById/' +
         this.$route.params.id +
         '?author=' +
-        this.loggedInUser.id
-      : 'articles/findById/' + this.$route.params.id
+        this.loggedInUser.id +
+        '?skip=' +
+        this.skip
+      : 'articles/findById/' + this.$route.params.id + '?skip=' + this.skip
     try {
       const article = await this.$axios.get(url)
       this.article = article.data
@@ -211,9 +214,12 @@ export default {
   },
   auth: false,
   computed: {
-    ...mapGetters(['loggedInUser', 'isAuthenticated']),
+    ...mapGetters(['loggedInUser', 'isAuthenticated', 'isMod']),
     alreadyLiked() {
       return this.article.liked_by.includes(this.loggedInUser.id)
+    },
+    isFeatured() {
+      return this.article.featured === true
     },
   },
   mounted() {
@@ -293,6 +299,40 @@ export default {
           })
       }
     },
+    featureTuto() {
+      this.featureLoading = true
+      if (!this.isFeatured) {
+        this.$axios
+          .put('articles/feature/' + this.$route.params.id, {
+            user: this.loggedInUser.id,
+          })
+          .then((data) => {
+            this.$utils.consoleLog(data)
+            this.article.featured = true
+          })
+          .catch((e) => {
+            this.consoleError(e)
+          })
+          .finally(() => {
+            this.featureLoading = false
+          })
+      } else {
+        this.$axios
+          .put('articles/unfeature/' + this.$route.params.id, {
+            user: this.loggedInUser.id,
+          })
+          .then((data) => {
+            this.$utils.consoleLog(data)
+            this.article.featured = false
+          })
+          .catch((e) => {
+            this.consoleError(e)
+          })
+          .finally(() => {
+            this.featureLoading = false
+          })
+      }
+    },
     unpublish() {
       this.loading = true
       this.$axios
@@ -367,9 +407,18 @@ export default {
       background-color: $brand-light-grey;
       border-radius: $rad;
       width: 100%;
-      justify-content: space-around;
       display: flex;
+      flex-direction: column;
       flex-wrap: wrap;
+      button {
+        min-width: 200px;
+        width: 50%;
+        margin: auto;
+        margin-bottom: $pad-min;
+        &:not(.red) {
+          border: 2px solid $brand-grey;
+        }
+      }
     }
     &_thumbnail {
       border-radius: $rad;

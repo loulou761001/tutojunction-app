@@ -2,13 +2,16 @@
   <div class="create app-inner">
     <form class="create--form" @submit.prevent="">
       <div class="create--form_field">
+        <h5>Titre de ton article :</h5>
         <textarea
           v-model="articleData.title"
           :disabled="loading"
           placeholder="Le titre de ton article"
           class="w-full"
         />
-        <p v-if="error.title" class="error">{{ error.title }}</p>
+        <p v-if="error.title" class="error">
+          {{ errorMessages.title[error.title] }}
+        </p>
       </div>
       <div class="create--form_field">
         <button
@@ -19,7 +22,7 @@
             popupOpen = true
           "
         >
-          Ajoute une miniature à ton article !
+          Ajoute une image de couverture à ton article !
         </button>
         <div
           v-else
@@ -30,9 +33,12 @@
             <font-awesome-icon icon="fa-xmark" />
           </button>
         </div>
-        <p v-if="error.thumbnail" class="error">{{ error.thumbnail }}</p>
+        <p v-if="error.thumbnail" class="error">
+          {{ errorMessages.thumbnail[error.thumbnail] }}
+        </p>
       </div>
       <div class="create--form_field">
+        <h5>Contenu de ton article :</h5>
         <EditorWysiwyg
           ref="editor"
           :loading="loading"
@@ -47,7 +53,31 @@
         <div v-if="charsLeft" :class="{ error: charsLeft.tooLong }">
           {{ charsLeft.text }}
         </div>
-        <p v-if="error.content" class="error">{{ error.content }}</p>
+        <p v-if="error.content" class="error">
+          {{ errorMessages.content[error.content] }}
+        </p>
+      </div>
+      <div class="create--form_field">
+        <h5>Estimation du temps requis pour suivre le tuto :</h5>
+        <input
+          v-model="articleData.time_required[0]"
+          :disabled="loading"
+          type="number"
+          min="0"
+          max="48"
+          required
+        />
+        <label>heures</label>
+        <input
+          v-model="articleData.time_required[1]"
+          :disabled="loading"
+          type="number"
+          min="0"
+          max="59"
+          step="5"
+          required
+        />
+        <label>minutes</label>
       </div>
       <div class="create--form_field">
         <input
@@ -58,6 +88,7 @@
           @keydown="checkTagsLastChar"
         />
         <div v-if="articleData.tags.length > 0" class="create--form--tags-list">
+          <h5>Entre des tags pour ton article :</h5>
           <span
             v-for="tag in articleData.tags"
             :key="tag"
@@ -66,10 +97,12 @@
             >{{ tag }} <span class="cross">🞤</span></span
           >
         </div>
-        <p v-if="error.tags" class="error">{{ error.tags }}</p>
+        <p v-if="error.tags" class="error">
+          {{ errorMessages.tags[error.tags] }}
+        </p>
       </div>
       <div class="create--form_field">
-        <h5>Catégorie</h5>
+        <h5>Catégorie :</h5>
         <div>
           <span
             v-for="category in parentCategories"
@@ -80,7 +113,7 @@
             >{{ category.name }}</span
           >
         </div>
-        <h5 v-if="childCategories.length > 0">Sous-catégorie</h5>
+        <h5 v-if="childCategories.length > 0">Sous-catégorie :</h5>
         <div v-if="childCategories.length > 0">
           <span
             v-for="category in childCategories"
@@ -91,7 +124,9 @@
             >{{ category.name }}</span
           >
         </div>
-        <p v-if="error.category" class="error">{{ error.category }}</p>
+        <p v-if="error.category" class="error">
+          {{ errorMessages.category[error.category] }}
+        </p>
       </div>
 
       <input
@@ -134,11 +169,29 @@ export default {
         content: 10000,
       },
       loading: false,
+      errorMessages: {
+        title: {
+          tooShort: 'Trop court ! entre au moins 12 caractères.',
+          tooLong: 'Trop long ! entre moins de 300 caractères.',
+        },
+        content: {
+          tooShort: 'Trop court ! entre au moins 64 caractères.',
+        },
+        tags: {
+          tooMany: 'Tu ne peux entrer que 12 tags au maximum.',
+          tooLong: 'Trop long ! entre moins de 30 caractères.',
+        },
+        category: { noCat: 'Tu dois sélectionner au moins 1 catégorie.' },
+        thumbnail: {
+          noThumbnail: 'Tu dois sélectionner une image de couverture',
+        },
+      },
       articleData: {
         content: '',
         title: '',
         tags: [],
         categories: [null, null],
+        time_required: [null, null],
         thumbnail: null,
       },
       tagsString: '',
@@ -159,7 +212,7 @@ export default {
     },
     childCategories() {
       return this.getCategories.filter(
-        (item) => item.parent === this.articleData.categories[0]
+        (item) => item.parent && item.parent === this.articleData.categories[0]
       )
     },
     charsLeft() {

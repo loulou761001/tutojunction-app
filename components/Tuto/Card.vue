@@ -16,6 +16,12 @@
         {{
           tuto.title.length > 16 ? tuto.title.slice(0, 16) + '...' : tuto.title
         }}
+        <font-awesome-icon
+          v-if="tuto.featured === true"
+          icon="fa-solid fa-star"
+          style="color: #ffcd29"
+          title="Sélectionné par notre équipe"
+        />
       </h4>
       <p>
         {{ new Date(tuto.published_at).toLocaleDateString('fr') }},
@@ -26,6 +32,13 @@
           })
         }}
       </p>
+      <span class="category-name" style="margin-block: 5px; margin-left: 0">
+        <font-awesome-icon
+          style="color: #cfcfcf; margin-right: 5px"
+          icon="fa-solid fa-clock"
+        />{{ tuto.time_required[0] }}:{{ tuto.time_required[1] < 10 ? '0' : ''
+        }}{{ tuto.time_required[1] }}
+      </span>
       <div class="flex" style="align-items: center; gap: 5px">
         <UserAvatar :avatar="tuto.author.avatar" /><span>{{
           tuto.author.username

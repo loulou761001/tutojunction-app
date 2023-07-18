@@ -1,24 +1,30 @@
 <template>
   <div class="home">
-    <flicking
-      v-if="articles.featured.length"
-      class="home_featured"
-      :plugins="[
-        new AutoPlay({ duration: 4500, direction: 'NEXT', stopOnHover: false }),
-      ]"
-      :options="{
-        align: 'prev',
-        circular: true,
-        // panelsPerView: 1,
-        moveType: 'snap',
-      }"
-    >
-      <TutoFeaturedCard
-        v-for="tuto in articles.featured"
-        :key="tuto._id + ' -featured'"
-        :tuto="tuto"
-      />
-    </flicking>
+    <client-only>
+      <flicking
+        v-if="articles.featured.length"
+        class="home_featured"
+        :plugins="[
+          new AutoPlay({
+            duration: 4500,
+            direction: 'NEXT',
+            stopOnHover: false,
+          }),
+        ]"
+        :options="{
+          align: 'prev',
+          circular: true,
+          // panelsPerView: 1,
+          moveType: 'snap',
+        }"
+      >
+        <TutoFeaturedCard
+          v-for="tuto in articles.featured"
+          :key="tuto._id + ' -featured'"
+          :tuto="tuto"
+        />
+      </flicking>
+    </client-only>
     <div class="home--rows">
       <tuto-row
         v-if="isAuthenticated && articles.subbed.length"
@@ -47,8 +53,33 @@
         />
       </Flicking>
       <tuto-row title="Derniers articles" :tutos="articles.latest" />
+      <div style="display: flex; width: 100%">
+        <nuxt-link
+          to="/tuto?sorting=latest"
+          class="category-name"
+          style="font-weight: bold; margin-left: auto; padding-inline: 15px"
+          >Voir plus</nuxt-link
+        >
+      </div>
+
       <tuto-row title="Les plus aimés" :tutos="articles.likes" />
+      <div style="display: flex; width: 100%">
+        <nuxt-link
+          to="/tuto?sorting=byLikes"
+          class="category-name"
+          style="font-weight: bold; margin-left: auto; padding-inline: 15px"
+          >Voir plus</nuxt-link
+        >
+      </div>
       <tuto-row title="Les plus vus" :tutos="articles.views" />
+      <div style="display: flex; width: 100%">
+        <nuxt-link
+          to="/tuto?sorting=byViews"
+          class="category-name"
+          style="font-weight: bold; margin-left: auto; padding-inline: 15px"
+          >Voir plus</nuxt-link
+        >
+      </div>
     </div>
   </div>
 </template>

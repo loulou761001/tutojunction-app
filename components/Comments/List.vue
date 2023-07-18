@@ -1,5 +1,8 @@
 <template>
-  <div id="comment-list" class="comment-list">
+  <div v-if="$fetchState.pending">
+    <SpinnerLoader />
+  </div>
+  <div v-else id="comment-list" class="comment-list">
     <div v-if="isAuthenticated" class="comment-list--field">
       <h4>Laisse un commentaire sur ce guide !</h4>
       <div class="comment-list--field--info">
@@ -26,26 +29,40 @@
       v-for="comment in comments"
       :key="comment._id"
       :comment="comment"
+      @deletedComment="$fetch()"
     />
+    <div class="comment-list--pagination">
+      <button
+        v-if="skip > 0"
+        class="category-name link-style"
+        @click="paginatePrev"
+      >
+        Précédents
+      </button>
+      <button
+        v-if="comments.length === 10"
+        class="category-name link-style"
+        @click="paginateNext"
+      >
+        Suivants
+      </button>
+    </div>
   </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import UserAvatar from '../User/Avatar.vue'
+import SpinnerLoader from '../SpinnerLoader.vue'
 import CommentSingle from './Single.vue'
 
 export default {
   name: 'CommentList',
-  components: { UserAvatar, CommentSingle },
-  props: {
-    comments: {
-      type: Array,
-      required: true,
-    },
-  },
+  components: { SpinnerLoader, UserAvatar, CommentSingle },
   data() {
     return {
+      comments: [],
+      skip: 0,
       newComment: { content: '' },
       errorMessage: {
         tooLong: 'Ton commentaire est trop long ! (255 caractères max)',
@@ -56,11 +73,29 @@ export default {
       },
     }
   },
+  async fetch() {
+    await this.$axios
+      .get('comments/' + this.$route.params.id + '?skip=' + this.skip)
+      .then((data) => {
+        this.comments = data.data
+      })
+      .catch((e) => {
+        this.$utils.consoleError(e)
+      })
+  },
   computed: {
     ...mapGetters(['loggedInUser', 'isAuthenticated']),
   },
   methods: {
     ...mapActions(['setConfPopupOpen']),
+    paginateNext() {
+      this.skip = this.skip + 20
+      this.$fetch()
+    },
+    paginatePrev() {
+      this.skip = this.skip - 10
+      this.$fetch()
+    },
     checkComment() {
       if (!this.loggedInUser.confirmed) {
         this.setConfPopupOpen(true)
@@ -81,9 +116,11 @@ export default {
         this.newComment.author = this.loggedInUser.id
         this.newComment.article = this.$route.params.id
         this.newComment.liked_by = []
+        this.newComment.created_at = new Date()
         this.$axios
           .post('/comments/', this.newComment)
           .then((data) => {
+            this.newComment.content = ''
             this.$utils.consoleLog(data)
             data.data.comment.author = this.loggedInUser
             // eslint-disable-next-line vue/no-mutating-props

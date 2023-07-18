@@ -1,14 +1,14 @@
 <template>
   <div class="admin-modmail">
     <div class="admin-modmail--header">
-      <h4>Messages envoyés par les utilisateurs :</h4>
+      <h4>Demandes de certifications :</h4>
     </div>
     <SpinnerLoader v-if="$fetchState.pending" />
     <div v-else class="admin-modmail--messages">
       <nuxt-link
         v-for="message in messages"
         :key="message._id"
-        :to="'/admin/modmail/' + message._id"
+        :to="'/admin/certifs/' + message._id"
         class="admin-modmail--messages_single"
       >
         <span>par : {{ message.author.username }} | </span>
@@ -54,7 +54,7 @@ export default {
   },
   async fetch() {
     await this.$axios
-      .get('modmail/messages?skip=' + this.skip)
+      .get('modmail/certifs?skip=' + this.skip)
       .then((data) => {
         this.messages = data.data
       })

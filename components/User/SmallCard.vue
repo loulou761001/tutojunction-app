@@ -106,6 +106,7 @@ export default {
   background-color: white;
   display: flex;
   min-width: 290px;
+  flex-wrap: wrap;
   border-radius: $rad;
   padding: $rad;
   margin-bottom: $rad;

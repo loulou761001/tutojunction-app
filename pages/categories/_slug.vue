@@ -63,6 +63,7 @@ export default {
     this.$utils.consoleLog('category', category)
     if (!category) {
       this.error = true
+      this.$error()
       return
     }
     this.category = category

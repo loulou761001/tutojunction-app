@@ -1,50 +1,11 @@
 <template>
   <header class="tj-header">
-    <nuxt-link to="/" class="tj-header_logo no-deco"><tj-logo /></nuxt-link>
+    <nuxt-link to="/admin" class="tj-header_logo no-deco"
+      ><tj-logo />
+      <h4 style="display: flex">Admin</h4></nuxt-link
+    >
 
     <div class="tj-header--inner">
-      <div v-if="$breakpoints.lLg" class="search-input">
-        <form @submit.prevent="goSearchPage">
-          <input
-            v-model="search.query"
-            type="text"
-            placeholder="Recherche..."
-            @keyup="searchDebounce"
-          />
-          <font-awesome-icon
-            icon="magnifying-glass"
-            class="icon"
-            @click="goSearchPage()"
-          />
-        </form>
-
-        <div
-          v-if="search.query.length > 1 && loggedInUser.confirmed === true"
-          class="search-results"
-        >
-          <p v-if="search.results.length === 0">Aucun résultat...</p>
-          <nuxt-link
-            v-for="item in search.results"
-            :key="item._id"
-            :to="'/tuto/' + item._id"
-            class="search-results--item"
-          >
-            <p>{{ item.title }}</p>
-            <span
-              v-for="cat in item.categories"
-              :key="cat._id"
-              class="category-name small"
-              >{{ cat.name }}</span
-            >
-            <span
-              v-for="tag in item.tags.slice(0, 4)"
-              :key="tag"
-              class="category-name small"
-              >{{ tag }}</span
-            >
-          </nuxt-link>
-        </div>
-      </div>
       <font-awesome-icon
         v-if="!$breakpoints.lLg"
         :icon="navOpen ? 'fa-solid fa-xmark' : 'bars'"
@@ -54,79 +15,32 @@
         @click="navOpen = !navOpen"
       />
       <nav v-if="$breakpoints.lLg || navOpen" class="tj-header--inner--nav">
-        <div
-          v-if="!$breakpoints.lLg"
-          class="tj-header--inner--nav--item search-input"
-        >
-          <form @submit.prevent="goSearchPage">
-            <input
-              v-model="search.query"
-              type="text"
-              placeholder="Recherche..."
-              @keyup="searchDebounce"
-            />
-            <font-awesome-icon
-              icon="magnifying-glass"
-              class="icon"
-              @click="goSearchPage"
-            />
-          </form>
-
-          <div v-if="search.query.length > 1" class="search-results">
-            <p v-if="search.results.length === 0">Aucun résultat...</p>
-            <div
-              v-for="item in search.results"
-              :key="item._id"
-              class="search-results--item"
-            >
-              <p>{{ item.title }}</p>
-              <span
-                v-for="cat in item.categories"
-                :key="cat._id"
-                class="category-name small"
-                >{{ cat.name }}</span
-              >
-              <span
-                v-for="tag in item.tags.slice(0, 4)"
-                :key="tag"
-                class="category-name small"
-                >{{ tag }}</span
-              >
-            </div>
-          </div>
-        </div>
         <nuxt-link
           v-if="$auth.loggedIn"
           to="/user"
           class="tj-header--inner--nav--item"
           ><UserAvatar :avatar="loggedInUser.avatar" size="48px"
         /></nuxt-link>
-        <nuxt-link to="/categories" class="tj-header--inner--nav--item"
-          >Nos catégories</nuxt-link
+        <nuxt-link to="/admin/categories" class="tj-header--inner--nav--item"
+          >Les catégories</nuxt-link
         >
         <nuxt-link
           v-if="$auth.loggedIn"
-          to="/creer"
+          to="/admin/modmails"
           class="tj-header--inner--nav--item"
-          >Rédige un article !</nuxt-link
+          >Messages d'utilisateurs</nuxt-link
         >
         <nuxt-link
           v-if="$auth.loggedIn && $breakpoints.sMd"
-          to="/modmail"
+          to="/admin/modmail"
           class="tj-header--inner--nav--item"
           >Un probleme, des retours ? Contacte l'équipe !</nuxt-link
         >
         <nuxt-link
           v-if="$breakpoints.sMd"
-          to="/cgu"
-          class="tj-header--inner--nav--item"
-          >Nos mentions légales</nuxt-link
-        >
-        <nuxt-link
-          v-if="$breakpoints.sMd && isMod"
           to="/admin"
           class="tj-header--inner--nav--item"
-          >Console d'administration</nuxt-link
+          >Retour sur le site</nuxt-link
         >
         <nuxt-link
           v-if="!$auth.loggedIn"
@@ -148,9 +62,9 @@
 <script>
 import debounce from 'lodash.debounce'
 import { mapActions, mapGetters } from 'vuex'
-import UserAvatar from './User/Avatar.vue'
+import UserAvatar from '../User/Avatar.vue'
 export default {
-  name: 'HeaderComp',
+  name: 'AdminHeaderComp',
   components: { UserAvatar },
   data() {
     return {
@@ -210,6 +124,7 @@ export default {
     padding-block: $pad-demi + $rad;
   }
   &_logo {
+    display: flex;
     z-index: 2;
     position: absolute;
     top: $pad-min;
@@ -222,6 +137,7 @@ export default {
     display: flex;
     align-items: center;
     padding-left: $pad-min;
+    //justify-content: space-between;
     @include min-sm {
       padding-left: 80px;
     }
@@ -236,6 +152,7 @@ export default {
     }
 
     &--nav {
+      margin-left: auto;
       font-weight: bold;
       position: absolute;
       top: 64px;

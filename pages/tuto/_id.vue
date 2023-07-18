@@ -200,6 +200,7 @@ export default {
       await this.findSimilar()
     } catch (e) {
       this.error = true
+      this.$error()
       this.$utils.consoleError('error', e)
     }
   },

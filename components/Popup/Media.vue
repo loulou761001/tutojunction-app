@@ -68,14 +68,17 @@
         @delete="deleteImg(selectedImage)"
       />
     </div>
-    <div v-else>
-      <p>test filepond</p>
+    <div v-else class="popup-media--upload">
+      <h4>Mets en ligne tes images ici !</h4>
+      <p>formats acceptés : PNG, JPG, GIF, taille maximale : 4MB.</p>
+      <!-- Composant tiré du plugin Vue-FilePond, côté front-end  -->
       <client-only>
         <file-pond
           ref="pond"
+          style="margin-top: 15px"
           name="image"
           class="filepond"
-          label-idle="Drop files here..."
+          label-idle="Choisis tes fichiers."
           :allow-multiple="false"
           :allow-file-size-validation="true"
           :max-file-size="'4MB'"
@@ -144,9 +147,9 @@ export default {
     server() {
       let url
       if (this.category === 'profile') {
-        url = 'http://localhost:1337/files/profile'
+        url = process.env.API_URL + 'files/profile'
       } else {
-        url = 'http://localhost:1337/files/'
+        url = process.env.API_URL + 'files/'
       }
       return {
         url,
@@ -201,6 +204,7 @@ export default {
 .popup-media {
   &--header {
   }
+
   &--images {
     display: flex;
     gap: $rad;
@@ -240,6 +244,15 @@ export default {
         }
       }
     }
+  }
+  &--pagination {
+    margin-block: $pad-min;
+    display: flex;
+    justify-content: space-between;
+  }
+  &--validate {
+    display: flex;
+    justify-content: space-around;
   }
 }
 </style>

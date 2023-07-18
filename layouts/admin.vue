@@ -1,12 +1,9 @@
 <template>
-  <div v-if="$fetch.pending" class="loading">
+  <div v-if="$fetchState.pending" class="loading">
     <SpinnerLoader />
   </div>
   <div v-else class="app">
-    <HeaderComp />
-    <div v-if="$route.query.banned" class="banned error">
-      <p>Désolé, tu as été banni.</p>
-    </div>
+    <AdminHeaderComp />
     <div
       v-if="isAuthenticated && !loggedInUser.confirmed"
       class="confirm link-style"
@@ -23,7 +20,7 @@
     </div>
     <div class="app--content flex">
       <nuxt class="app--content_center" />
-      <AppSidebar
+      <AdminAppSidebar
         v-if="
           !$route.name.includes('login') && !$route.name.includes('register')
         "
@@ -39,21 +36,11 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import HeaderComp from '../components/Header.vue'
-import AppSidebar from '../components/AppSidebar.vue'
-import PopupLogin from '../components/Popup/Login.vue'
-import PopupConfirm from '../components/Popup/Confirm.vue'
-import SpinnerLoader from '../components/SpinnerLoader.vue'
+import AdminHeaderComp from '../components/Admin/Header.vue'
 
 export default {
   name: 'Default',
-  components: {
-    SpinnerLoader,
-    PopupConfirm,
-    PopupLogin,
-    AppSidebar,
-    HeaderComp,
-  },
+  components: { AdminHeaderComp },
   data() {
     return {
       emailConfirm: {

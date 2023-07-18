@@ -60,7 +60,7 @@ export default {
   ],
   storage: {},
   axios: {
-    baseURL: 'http://localhost:1337', // Used as fallback if no runtime config is provided
+    baseURL: process.env.API_URL, // Used as fallback if no runtime config is provided
   },
   router: {
     middleware: ['auth'],

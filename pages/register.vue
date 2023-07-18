@@ -29,7 +29,9 @@
           :minlength="newUser.username.rules.minLength"
           :maxlength="newUser.username.rules.maxLength"
         />
-        <p v-if="errors.username" class="error">{{ errors.username.type }}</p>
+        <p v-if="errors.username" class="error">
+          {{ errorMessage('username')[errors.username.type] }}
+        </p>
       </div>
       <div class="register-form--field">
         <label for="username">Prénom :</label>
@@ -41,7 +43,9 @@
           :minlength="newUser.firstname.rules.minLength"
           :maxlength="newUser.firstname.rules.maxLength"
         />
-        <p v-if="errors.firstname" class="error">{{ errors.firstname.type }}</p>
+        <p v-if="errors.firstname" class="error">
+          {{ errorMessage('firstname')[errors.firstname.type] }}
+        </p>
       </div>
       <div class="register-form--field">
         <label for="username">Nom :</label>
@@ -53,7 +57,9 @@
           :minlength="newUser.lastname.rules.minLength"
           :maxlength="newUser.lastname.rules.maxLength"
         />
-        <p v-if="errors.lastname" class="error">{{ errors.lastname.type }}</p>
+        <p v-if="errors.lastname" class="error">
+          {{ errorMessage('lastname')[errors.lastname.type] }}
+        </p>
       </div>
       <div class="register-form--field">
         <label for="email">Adresse e-mail :</label>
@@ -63,7 +69,9 @@
           type="email"
           name="email"
         />
-        <p v-if="errors.email" class="error">{{ errors.email.type }}</p>
+        <p v-if="errors.email" class="error">
+          {{ errorMessage('email')[errors.email.type] }}
+        </p>
       </div>
       <div class="register-form--field">
         <label for="password">Mot de passe :</label>
@@ -75,7 +83,34 @@
           type="password"
           name="password"
         />
-        <p v-if="errors.password" class="error">{{ errors.password.type }}</p>
+        <p v-if="errors.password" class="error">
+          {{ errorMessage('password')[errors.password.type] }}
+        </p>
+      </div>
+      <div class="register-form--field">
+        <label for="checkbox">Conditions générales :</label>
+        <div class="cgu">
+          <input
+            v-model="newUser.checkbox"
+            :minlength="newUser.password.rules.minLength"
+            :maxlength="newUser.password.rules.maxLength"
+            :disabled="loading"
+            type="checkbox"
+            name="checkbox"
+            placeholder="test"
+          />
+          <span
+            >En cochant cette case, je garantis accepter
+            <nuxt-link to="/cgu"
+              >les conditions générales de TutoJunction</nuxt-link
+            >
+            et d'avoir au moins 13 ans.</span
+          >
+        </div>
+
+        <p v-if="errors.checkbox" class="error">
+          "Tu dois accepter les conditions d'utilisatation de TutoJunction!"
+        </p>
       </div>
       <div class="register-form--field submit">
         <input
@@ -105,6 +140,7 @@ export default {
     return {
       registerSuccess: false,
       newUser: {
+        checkbox: false,
         email: {
           value: '',
           rules: {
@@ -151,31 +187,45 @@ export default {
     }
   },
   methods: {
+    errorMessage(key) {
+      return {
+        tooLong:
+          'Trop long ! (' + this[key].rules.maxLength + ' caractères max)',
+        tooShort:
+          'Trop court ! (' + this[key].rules.minLength + ' caractères min)',
+        invalidFormat: "Format d'email incorrect",
+        taken: 'Déjà pris !',
+        empty: 'Ce champ est requis.',
+      }
+    },
     async checkForm() {
       this.errors = {}
       const regexUsername = /^[a-zA-Z0-9-_]+$/
-      const nameUsername = /^[A-Za-z-]+$/
+      const regexName = /^[A-Za-z-]+$/
       if (!regexUsername.test(this.newUser.username.value)) {
         this.errors.username = { type: 'invalidFormat' }
       }
-      if (!nameUsername.test(this.newUser.firstname.value)) {
+      if (!regexName.test(this.newUser.firstname.value)) {
         this.errors.firstname = { type: 'invalidFormat' }
       }
-      if (!nameUsername.test(this.newUser.lastname.value)) {
+      if (!regexName.test(this.newUser.lastname.value)) {
         this.errors.lastname = { type: 'invalidFormat' }
       }
+      if (!this.newUser.checkbox) this.errors.checkbox = true
       Object.keys(this.newUser).forEach((k) => {
-        this.newUser[k].value = this.newUser[k].value.trim()
-        if (this.newUser[k].value.length === 0) {
-          this.errors[k] = { type: 'empty' }
-        } else if (
-          this.newUser[k].value.length > this.newUser[k].rules.maxLength
-        ) {
-          this.errors[k] = { type: 'tooLong' }
-        } else if (
-          this.newUser[k].value.length < this.newUser[k].rules.minlength
-        ) {
-          this.errors[k] = { type: 'tooShort' }
+        if (k !== 'checkbox') {
+          this.newUser[k].value = this.newUser[k].value.trim()
+          if (this.newUser[k].value.length === 0) {
+            this.errors[k] = { type: 'empty' }
+          } else if (
+            this.newUser[k].value.length > this.newUser[k].rules.maxLength
+          ) {
+            this.errors[k] = { type: 'tooLong' }
+          } else if (
+            this.newUser[k].value.length < this.newUser[k].rules.minlength
+          ) {
+            this.errors[k] = { type: 'tooShort' }
+          }
         }
       })
 
@@ -256,6 +306,10 @@ export default {
         margin-block: $rad;
         font-size: 14px;
         color: red;
+      }
+      .cgu {
+        display: flex;
+        gap: $rad;
       }
       &.submit {
         .btn,

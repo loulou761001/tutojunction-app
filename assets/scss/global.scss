@@ -135,6 +135,13 @@ hr {
     border-top-color: $brand-light-grey;
   }
 }
+input[type=checkbox] {
+  width: 32px;
+  height: 32px;
+  &:checked {
+    accent-color: $brand-yellow;
+  }
+}
 input, input[type=submit],.text-input,textarea,select
 {
   padding: $rad $pad-min;

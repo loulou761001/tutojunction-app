@@ -13,6 +13,7 @@
     "lintfix": "prettier --write --list-different . && yarn lint:js --fix"
   },
   "dependencies": {
+    "@egjs/flicking-plugins": "^4.7.1",
     "@egjs/vue-flicking": "^4.10.8",
     "@fortawesome/fontawesome-svg-core": "^6.4.0",
     "@fortawesome/free-solid-svg-icons": "^6.4.0",

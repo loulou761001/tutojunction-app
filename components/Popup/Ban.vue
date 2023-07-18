@@ -4,10 +4,15 @@
       <font-awesome-icon icon="fa-xmark" size="xl" />
     </div>
     <div class="popup-delete--content">
-      <p>Es-tu sûr de vouloir supprimer cet élément ?</p>
-      <p v-if="message">{{ message }}</p>
-      <button v-if="!loading" class="btn red" @click="$emit('delete')">
-        oui, supprimer
+      <p>Es-tu sûr de vouloir bannir cet utilisateur ?</p>
+      <textarea v-model="message" style="width: 100%" />
+      <button
+        v-if="!loading"
+        :disabled="message.trim().length === 0"
+        class="btn"
+        @click="$emit('ban', message)"
+      >
+        oui, bannir
       </button>
       <button v-if="!loading" class="btn" @click="$emit('close')">non</button>
       <SpinnerLoader v-else />
@@ -19,18 +24,20 @@
 import SpinnerLoader from '../SpinnerLoader.vue'
 
 export default {
-  name: 'PopupDelete',
+  name: 'PopupBan',
   components: { SpinnerLoader },
   props: {
     loading: {
       type: Boolean,
       required: true,
     },
-    message: {
-      type: String,
-      default: null,
-    },
   },
+  data() {
+    return {
+      message: '',
+    }
+  },
+  computed: {},
 }
 </script>
 

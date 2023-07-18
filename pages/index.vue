@@ -1,19 +1,24 @@
 <template>
   <div class="home">
-    <div
-      v-if="isAuthenticated && !loggedInUser.confirmed"
-      class="home--confirm link-style"
-      @click.prevent="sendConfMail"
+    <flicking
+      v-if="articles.featured.length"
+      class="home_featured"
+      :plugins="[
+        new AutoPlay({ duration: 4500, direction: 'NEXT', stopOnHover: false }),
+      ]"
+      :options="{
+        align: 'prev',
+        circular: true,
+        // panelsPerView: 1,
+        moveType: 'snap',
+      }"
     >
-      <SpinnerLoader v-if="emailConfirm.loading" />
-      <p v-else-if="!emailConfirm.loading && !emailConfirm.success">
-        Tu n'as pas encore confirmé ton compte, clique ici pour te faire
-        renvoyer l'email de confirmation.
-      </p>
-      <p v-else-if="!emailConfirm.loading && emailConfirm.success">
-        Un email t'a été envoyé à {{ loggedInUser.email }}
-      </p>
-    </div>
+      <TutoFeaturedCard
+        v-for="tuto in articles.featured"
+        :key="tuto._id + ' -featured'"
+        :tuto="tuto"
+      />
+    </flicking>
     <div class="home--rows">
       <tuto-row
         v-if="isAuthenticated && articles.subbed.length"
@@ -25,6 +30,22 @@
         title="Catégories suivies"
         :tutos="articles.followedCats"
       />
+      <div v-if="!$breakpoints.lLg && isAuthenticated">
+        <h3>Utilisateurs recommandés</h3>
+        <hr />
+      </div>
+      <Flicking
+        v-if="!$breakpoints.lLg"
+        :options="{ align: 'prev' }"
+        style="margin-bottom: 30px"
+      >
+        <user-small-card
+          v-for="user in getRecoUsers"
+          :key="user._id"
+          :user="user"
+          style="margin-right: 5px"
+        />
+      </Flicking>
       <tuto-row title="Derniers articles" :tutos="articles.latest" />
       <tuto-row title="Les plus aimés" :tutos="articles.likes" />
       <tuto-row title="Les plus vus" :tutos="articles.views" />
@@ -33,24 +54,24 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
+import { AutoPlay } from '@egjs/flicking-plugins'
 import TutoRow from '../components/Tuto/Row.vue'
-import SpinnerLoader from '../components/SpinnerLoader.vue'
+import TutoFeaturedCard from '../components/Tuto/FeaturedCard.vue'
+import UserSmallCard from '../components/User/SmallCard.vue'
 
 export default {
   name: 'IndexPage',
-  components: { SpinnerLoader, TutoRow },
+  components: { UserSmallCard, TutoFeaturedCard, TutoRow },
   auth: false,
   data() {
     return {
-      emailConfirm: {
-        loading: false,
-        success: false,
-      },
+      usersReco: null,
       articles: {
         views: [],
         latest: [],
         likes: [],
+        featured: [],
         subbed: [],
         followedCats: [],
       },
@@ -61,6 +82,13 @@ export default {
       const latest = await this.$axios.get('articles/latest?limit=10')
       this.$utils.consoleLog('latest', latest.data)
       this.articles.latest = latest.data
+    } catch (e) {
+      this.$utils.consoleError(e)
+    }
+    try {
+      const featured = await this.$axios.get('articles/featured/?limit=6')
+      this.$utils.consoleLog('featured', featured.data)
+      this.articles.featured = featured.data
     } catch (e) {
       this.$utils.consoleError(e)
     }
@@ -99,7 +127,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['isAuthenticated', 'loggedInUser']),
+    AutoPlay() {
+      return AutoPlay
+    },
+    ...mapGetters(['isAuthenticated', 'loggedInUser', 'getRecoUsers']),
   },
 
   mounted() {
@@ -108,28 +139,7 @@ export default {
   },
 
   methods: {
-    sendConfMail() {
-      this.$utils.consoleLog('se d')
-      if (
-        this.emailConfirm.success === true ||
-        this.emailConfirm.loading === true
-      ) {
-        return
-      }
-      this.$utils.consoleLog('send')
-      this.emailConfirm.loading = true
-      this.$axios
-        .get('users/resendMail')
-        .then((data) => {
-          this.emailConfirm.success = true
-        })
-        .catch((e) => {
-          this.$utils.consoleError(e)
-        })
-        .finally(() => {
-          this.emailConfirm.loading = false
-        })
-    },
+    ...mapActions(['fillRecoUsers']),
     checkLoggedIn() {
       this.$utils.consoleLog('test')
       this.$axios
@@ -147,12 +157,12 @@ export default {
 
 <style lang="scss" scoped>
 .home {
-  &--confirm {
-    width: 100%;
-    padding: $pad-min;
-    background-color: $brand-light-grey;
-    border-bottom: $brand-orange;
-    cursor: pointer;
+  &_featured {
+    background-color: $brand-yellow;
+    height: 300px;
+    @include min-lg {
+      height: 420px;
+    }
   }
   &--rows {
     padding: $pad-min;

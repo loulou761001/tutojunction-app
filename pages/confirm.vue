@@ -26,7 +26,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['loggedInUser']),
+    ...mapGetters(['loggedInUser', 'isAuthenticated']),
   },
   mounted() {
     if (!this.$route.query.code) {
@@ -38,7 +38,8 @@ export default {
 
     let user = localStorage.getItem('user')
     user = JSON.parse(user)
-    if (!user) {
+    console.log(user)
+    if (this.isAuthenticated) {
       user = this.loggedInUser
       user._id = user.id
     }
@@ -86,4 +87,8 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.confirm {
+  padding: $pad-min;
+}
+</style>

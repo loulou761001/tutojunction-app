@@ -43,11 +43,9 @@
       >
     </div>
     <div v-if="isMod" class="app-sidebar--pannel">
-      <h4 class="app-sidebar--pannel_title">
-        Vers la console d'administration
-      </h4>
-      <nuxt-link to="/admin" class="app-sidebar--pannel_item"
-        >Console d'administration</nuxt-link
+      <h4 class="app-sidebar--pannel_title">Vers le site utilisateur</h4>
+      <nuxt-link to="/" class="app-sidebar--pannel_item"
+        >TutoJunction.com</nuxt-link
       >
     </div>
   </div>
@@ -55,12 +53,9 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import UserSmallCard from './User/SmallCard.vue'
-import SpinnerLoader from './SpinnerLoader.vue'
 
 export default {
-  name: 'AppSidebar',
-  components: { SpinnerLoader, UserSmallCard },
+  name: 'AdminAppSidebar',
 
   data() {
     return {

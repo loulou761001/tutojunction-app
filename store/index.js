@@ -1,5 +1,6 @@
 export const state = () => ({
   counter: 0,
+  recoUsers: null,
   categories: [],
   addImgState: 0,
   selectedImg: null,
@@ -10,12 +11,20 @@ export const getters = {
   isAuthenticated(state) {
     return state.auth.loggedIn
   },
-
+  isMod(state) {
+    return (
+      state.auth.loggedIn &&
+      (state.auth.user.role === 'moderator' || state.auth.user.role === 'admin')
+    )
+  },
   loggedInUser(state) {
     return state.auth.user
   },
   getCategories(state) {
     return state.categories
+  },
+  getRecoUsers(state) {
+    return state.recoUsers
   },
   getSelectedImg(state) {
     return state.selectedImg
@@ -31,6 +40,9 @@ export const getters = {
 export const mutations = {
   FILL_CATEGORIES(state, payload) {
     state.categories = payload
+  },
+  FILL_RECO_USERS(state, payload) {
+    state.recoUsers = payload
   },
   FILL_SELECTED_IMG(state, payload) {
     state.selectedImg = payload
@@ -48,6 +60,9 @@ export const actions = {
         commit('FILL_CATEGORIES', data.data)
       })
     }
+  },
+  fillRecoUsers: function ({ commit, state }, payload) {
+    commit('FILL_RECO_USERS', payload)
   },
   addImg: function ({ commit, state }, img) {
     this.$utils.consoleLog('action', img)

@@ -68,6 +68,7 @@ export default {
     background-position: center;
     background-size: cover;
     width: 120px;
+    min-width: 120px;
     margin-right: $pad-min;
     //margin-bottom: $pad-min;
     display: flex;

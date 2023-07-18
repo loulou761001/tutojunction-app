@@ -160,6 +160,8 @@ export default {
       margin-top: $pad-min;
     }
     &_buttons {
+      display: flex;
+      gap: $pad-min;
       margin-block: $pad-min;
     }
   }

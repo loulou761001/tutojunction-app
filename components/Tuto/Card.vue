@@ -40,9 +40,14 @@
         }}{{ tuto.time_required[1] }}
       </span>
       <div class="flex" style="align-items: center; gap: 5px">
-        <UserAvatar :avatar="tuto.author.avatar" /><span>{{
-          tuto.author.username
-        }}</span>
+        <UserAvatar :avatar="tuto.author.avatar" /><span
+          >{{ tuto.author.username }}
+          <font-awesome-icon
+            v-if="tuto.author.role === 'writer'"
+            icon="fa-solid fa-pen-nib"
+            style="color: #ffcd29"
+            title="Rédacteur certifié"
+        /></span>
       </div>
     </div>
     <hr v-if="!small" />

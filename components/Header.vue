@@ -143,7 +143,7 @@
         <a
           v-if="$breakpoints.sMd"
           target="_blank"
-          href="tutojunction.shop"
+          href="https://tutojunction.shop/"
           class="tj-header--inner--nav--item"
           >TutoJunction.shop</a
         >

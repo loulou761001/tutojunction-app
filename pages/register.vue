@@ -190,10 +190,14 @@ export default {
     errorMessage(key) {
       return {
         tooLong:
-          'Trop long ! (' + this[key].rules.maxLength + ' caractères max)',
+          'Trop long ! (' +
+          this.newUser[key].rules.maxLength +
+          ' caractères max)',
         tooShort:
-          'Trop court ! (' + this[key].rules.minLength + ' caractères min)',
-        invalidFormat: "Format d'email incorrect",
+          'Trop court ! (' +
+          this.newUser[key].rules.minLength +
+          ' caractères min)',
+        invalidFormat: 'Format incorrect',
         taken: 'Déjà pris !',
         empty: 'Ce champ est requis.',
       }
@@ -213,6 +217,7 @@ export default {
       }
       if (!this.newUser.checkbox) this.errors.checkbox = true
       Object.keys(this.newUser).forEach((k) => {
+        console.log(k)
         if (k !== 'checkbox') {
           this.newUser[k].value = this.newUser[k].value.trim()
           if (this.newUser[k].value.length === 0) {

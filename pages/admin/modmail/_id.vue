@@ -36,7 +36,7 @@ export default {
   name: 'ModmailSingle',
   components: { SpinnerLoader, UserSmallCard, PopupLoading },
   layout: 'admin',
-  middleware: ['auth', 'isMod'],
+  middleware: ['auth', 'isModMiddleware'],
   data() {
     return {
       message: {},

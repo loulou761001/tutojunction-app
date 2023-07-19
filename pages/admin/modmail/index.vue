@@ -44,7 +44,7 @@ export default {
   name: 'AdminModmail',
   components: { SpinnerLoader },
   layout: 'admin',
-  middleware: ['auth', 'isMod'],
+  middleware: ['auth', 'isModMiddleware'],
   data() {
     return {
       messages: [],

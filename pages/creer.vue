@@ -166,7 +166,7 @@ export default {
       maxCharacters: {
         title: 300,
         tags: 30,
-        content: 10000,
+        content: 4000,
       },
       loading: false,
       errorMessages: {
@@ -348,15 +348,17 @@ export default {
     async sendArticle() {
       this.$utils.consoleLog('send')
       this.loading = true
+      this.articleData.created_at = new Date()
       try {
         const data = await this.$axios.post(
           '/articles/create',
           this.articleData
         )
-        console.log(data)
+        this.$utils.consoleLog(data)
         await this.$router.push('/tuto/' + data.data._id)
       } catch (e) {
         this.$utils.consoleLog('error uploading : ', e)
+        this.$error()
       } finally {
         this.loading = false
       }

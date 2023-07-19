@@ -74,7 +74,7 @@ export default {
   name: 'AdminCategories',
   components: { PopupCategory, PopupDelete },
   layout: 'admin',
-  middleware: ['auth', 'isMod'],
+  middleware: ['auth', 'isModMiddleware'],
   data() {
     return {
       selectedCat: null,

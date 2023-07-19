@@ -25,6 +25,9 @@
         />
       </flicking>
     </client-only>
+    <div v-if="$fetchState.pending">
+      <SpinnerLoader />
+    </div>
     <div class="home--rows">
       <tuto-row
         v-if="isAuthenticated && articles.subbed.length"
@@ -47,18 +50,20 @@
         <h3>Utilisateurs recommandés</h3>
         <hr />
       </div>
-      <Flicking
-        v-if="!$breakpoints.lLg && getRecoUsers && getRecoUsers.length > 0"
-        :options="{ align: 'prev' }"
-        style="margin-bottom: 30px"
-      >
-        <user-small-card
-          v-for="user in getRecoUsers"
-          :key="user._id"
-          :user="user"
-          style="margin-right: 5px"
-        />
-      </Flicking>
+      <client-only>
+        <Flicking
+          v-if="!$breakpoints.lLg && getRecoUsers && getRecoUsers.length > 0"
+          :options="{ align: 'prev' }"
+          style="margin-bottom: 30px"
+        >
+          <user-small-card
+            v-for="user in getRecoUsers"
+            :key="user._id"
+            :user="user"
+            style="margin-right: 5px"
+          />
+        </Flicking>
+      </client-only>
       <tuto-row title="Derniers articles" :tutos="articles.latest" />
       <div style="display: flex; width: 100%">
         <nuxt-link
@@ -97,10 +102,16 @@ import { AutoPlay } from '@egjs/flicking-plugins'
 import TutoRow from '../components/Tuto/Row.vue'
 import TutoFeaturedCard from '../components/Tuto/FeaturedCard.vue'
 import UserSmallCard from '../components/User/SmallCard.vue'
+import SpinnerLoader from '../components/SpinnerLoader.vue'
 
 export default {
   name: 'IndexPage',
-  components: { UserSmallCard, TutoFeaturedCard, TutoRow },
+  components: {
+    SpinnerLoader,
+    UserSmallCard,
+    TutoFeaturedCard,
+    TutoRow,
+  },
   auth: false,
   data() {
     return {

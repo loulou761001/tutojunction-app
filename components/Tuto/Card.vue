@@ -43,7 +43,13 @@
         <UserAvatar :avatar="tuto.author.avatar" /><span
           >{{ tuto.author.username }}
           <font-awesome-icon
-            v-if="tuto.author.role === 'writer'"
+            v-if="
+              tuto.author.role === 'admin' || tuto.author.role === 'moderator'
+            "
+            icon="fa-solid fa-star"
+            style="color: #ffcd29"
+            title="Rédacteur certifié" /><font-awesome-icon
+            v-else-if="tuto.author.role === 'writer'"
             icon="fa-solid fa-pen-nib"
             style="color: #ffcd29"
             title="Rédacteur certifié"

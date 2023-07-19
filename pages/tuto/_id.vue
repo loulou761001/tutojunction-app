@@ -40,7 +40,12 @@
           Cet article n'a pas encore été publié.
         </p>
         <p v-else>Cet article est publié.</p>
-        <button class="btn" :disabled="featureLoading" @click="featureTuto()">
+        <button
+          v-if="article.published_at"
+          class="btn"
+          :disabled="featureLoading"
+          @click="featureTuto()"
+        >
           {{ isFeatured ? 'Ne plus mettre en avant' : 'Mettre en avant' }}
         </button>
         <button v-if="!article.published_at" class="btn" @click="publish">
@@ -194,9 +199,9 @@ export default {
         this.$route.params.id +
         '?author=' +
         this.loggedInUser.id +
-        '?skip=' +
-        this.skip
-      : 'articles/findById/' + this.$route.params.id + '?skip=' + this.skip
+        '&role=' +
+        this.loggedInUser.role
+      : 'articles/findById/' + this.$route.params.id
     try {
       const article = await this.$axios.get(url)
       this.article = article.data
@@ -424,8 +429,10 @@ export default {
       }
     }
     &_thumbnail {
+      margin-bottom: $pad-min;
       border-radius: $rad;
-      width: 100%;
+      background-color: $brand-yellow;
+      max-height: 500px;
     }
     &_title {
       //font-size: 24px;

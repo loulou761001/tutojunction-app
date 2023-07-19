@@ -123,6 +123,14 @@ export default {
         popup: false,
         loading: false,
       },
+      test: {
+        created_at: '2023-07-18T22:55:37.835Z',
+        uploader: '64b2f7d71673e558bd5b495d',
+        url: 'http://res.cloudinary.com/dxxnfnh7g/image/upload/v1689773188/upload_85db49b4fd094b55dcbf042288647b5c.jpg',
+        public_id: 'upload_85db49b4fd094b55dcbf042288647b5c',
+        category: 'article',
+        _id: '64b7e4843fd42c319edc0fc0',
+      },
     }
   },
   async fetch() {
@@ -192,6 +200,7 @@ export default {
       // FilePond instance methods are available on `this.$refs.pond`
     },
     handleMediaChange() {
+      console.log(this.$refs.pond.getFile())
       this.fileToUpload = this.$refs.pond.getFile()
       // console.log(this.$refs.pond.getFile())
       this.$utils.consoleLog('files', this.fileToUpload)

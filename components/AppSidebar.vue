@@ -46,7 +46,7 @@
       <h4 class="app-sidebar--pannel_title">Consulte notre boutique !</h4>
       <a
         target="_blank"
-        href="tutojunction.shop"
+        href="https://tutojunction.shop/"
         class="app-sidebar--pannel_item"
         >TutoJunction.shop</a
       >

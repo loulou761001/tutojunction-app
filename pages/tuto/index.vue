@@ -71,7 +71,13 @@ export default {
     try {
       const articles = await this.$axios.get(url)
       console.log(articles)
-      this.articles = articles.data
+      if (this.sorting === 'byLikes') {
+        this.articles = articles.data.sort(function (a, b) {
+          return b.likes_count - a.likes_count
+        })
+      } else {
+        this.articles = articles.data
+      }
     } catch (e) {
       this.$utils.consoleError('error:', e)
       await this.$error()

@@ -82,7 +82,7 @@ export default {
   name: 'AdminTutos',
   components: { SpinnerLoader },
   layout: 'admin',
-  middleware: ['auth', 'isMod'],
+  middleware: ['auth', 'isModMiddleware'],
   data() {
     return {
       articles: [],

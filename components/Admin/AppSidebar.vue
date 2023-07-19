@@ -9,13 +9,13 @@
       </h4>
       <nuxt-link
         v-if="$auth.loggedIn"
-        to="/modmail"
+        to="/admin/modmail"
         class="app-sidebar--pannel_item"
         >Messages des utilisateurs</nuxt-link
       >
       <nuxt-link
         v-if="$auth.loggedIn"
-        to="/modmail"
+        to="/admin/certifs"
         class="app-sidebar--pannel_item"
         >Demandes de certifications</nuxt-link
       >

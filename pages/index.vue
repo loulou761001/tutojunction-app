@@ -36,12 +36,19 @@
         title="Catégories suivies"
         :tutos="articles.followedCats"
       />
-      <div v-if="!$breakpoints.lLg && isAuthenticated">
+      <div
+        v-if="
+          !$breakpoints.lLg &&
+          isAuthenticated &&
+          getRecoUsers &&
+          getRecoUsers.length > 0
+        "
+      >
         <h3>Utilisateurs recommandés</h3>
         <hr />
       </div>
       <Flicking
-        v-if="!$breakpoints.lLg"
+        v-if="!$breakpoints.lLg && getRecoUsers && getRecoUsers.length > 0"
         :options="{ align: 'prev' }"
         style="margin-bottom: 30px"
       >

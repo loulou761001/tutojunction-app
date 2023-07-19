@@ -140,6 +140,13 @@
           class="tj-header--inner--nav--item"
           >Je me connecte !</nuxt-link
         >
+        <a
+          v-if="$breakpoints.sMd"
+          target="_blank"
+          href="tutojunction.shop"
+          class="tj-header--inner--nav--item"
+          >TutoJunction.shop</a
+        >
       </nav>
     </div>
   </header>

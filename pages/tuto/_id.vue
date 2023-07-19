@@ -223,16 +223,19 @@ export default {
     },
   },
   mounted() {
+    const id = this.$route.params.id
     //   INCREMENT VIEW COUNT
     setTimeout(() => {
-      this.$axios
-        .get('/articles/incrementViews/' + this.$route.params.id, {})
-        .then((data) => {
-          this.$utils.consoleLog('Views incremented', data.data)
-        })
-        .catch((e) => {
-          this.$utils.consoleError('Views incrementation error', e)
-        })
+      if (this.$route.params.id === id) {
+        this.$axios
+          .get('/articles/incrementViews/' + this.$route.params.id, {})
+          .then((data) => {
+            this.$utils.consoleLog('Views incremented', data.data)
+          })
+          .catch((e) => {
+            this.$utils.consoleError('Views incrementation error', e)
+          })
+      }
     }, 10000)
   },
   methods: {

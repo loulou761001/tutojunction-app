@@ -17,7 +17,7 @@
         >Voir plus</nuxt-link
       >
     </div>
-    <div v-if="getRecoUsers" class="app-sidebar--pannel">
+    <div v-if="getRecoUsers && getRecoUsers.length" class="app-sidebar--pannel">
       <h4 class="app-sidebar--pannel_title">Rédacteurs recommandés</h4>
       <UserSmallCard
         v-for="user in getRecoUsers"
@@ -40,6 +40,15 @@
       </h4>
       <nuxt-link to="/cgu" class="app-sidebar--pannel_item"
         >Nos mentions légales</nuxt-link
+      >
+    </div>
+    <div class="app-sidebar--pannel">
+      <h4 class="app-sidebar--pannel_title">Consulte notre boutique !</h4>
+      <a
+        target="_blank"
+        href="tutojunction.shop"
+        class="app-sidebar--pannel_item"
+        >TutoJunction.shop</a
       >
     </div>
     <div v-if="isMod" class="app-sidebar--pannel">
